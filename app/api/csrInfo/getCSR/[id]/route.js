@@ -9,7 +9,8 @@ export async function GET(req, { params }) {
   try {
     const csr = await CSRfom.findById(params.id)
       .populate("creatorId")
-      .populate("doctorId");
+      .populate("doctorId")
+      .sort({ createdAt: -1 });
     if (!csr) {
       return new NextResponse(JSON.stringify({ message: "Not found" }), { status: 404 });
     }

@@ -4,24 +4,27 @@
 @custom-variant dark (&:is(.dark *));
 
 @media print {
-  body * {
-    visibility: hidden;
+  body {
+    background: white; 
   }
-
-  .print-area, .print-area * {
-    visibility: visible;
+   .print-header {
+    font-size: 14px !important;
   }
-
-  .print-area {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height:100%;
-    margin: 0;
-    padding: 0;
+  .print-header img {
+    height: 40px !important;
+  }
+  @page {
+    size: A4;
+    margin: 10mm;
+  }
+  .print\:hidden {
+    display: none !important;
+  }
+  table {
+    page-break-inside: avoid;
   }
 }
+
 
 @theme inline {
   --color-background: var(--background);

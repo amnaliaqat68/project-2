@@ -20,7 +20,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "react-toastify";
 import CSRList from "../CSRList/page";
 import DoctorManagement from "../../admin/doctormanagement/page";
-import CSRPrintPage from "../print/[id]/page";
+
 
 const SMpage = () => {
   const [userRole, setUserRole] = useState("dsm");

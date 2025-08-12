@@ -28,7 +28,7 @@ export default function CSRForm({ doctorId }) {
     contact: "",
     patientsMorning: 0,
     patientsEvening: 0,
-    customerType: "New", 
+    customerType: "New",
     brick: "",
     products: [
       {
@@ -218,7 +218,7 @@ export default function CSRForm({ doctorId }) {
       toast.success("File uploaded successfully!");
     } catch (error) {
       console.error("Upload failed", error);
-        toast.error("File upload failed");
+      toast.error("File upload failed");
     } finally {
       setUploading(false);
     }
@@ -246,15 +246,15 @@ export default function CSRForm({ doctorId }) {
       console.log("API Response:", data);
 
       if (res.ok) {
-         toast.success("CSR submitted successfully!");
+        toast.success("CSR submitted successfully!");
         resetForm();
         router.push("/SMuser/dashboard");
       } else {
-         toast.error(`Error submitting CSR: ${data.message || "Unknown error"}`);
+        toast.error(`Error submitting CSR: ${data.message || "Unknown error"}`);
       }
     } catch (err) {
       console.error("Submission Error:", err);
-       toast.error("Failed to submit form");
+      toast.error("Failed to submit form");
     }
   };
 
@@ -294,7 +294,7 @@ export default function CSRForm({ doctorId }) {
       contact: "",
       patientsMorning: "",
       patientsEvening: "",
-      customerType: "New", 
+      customerType: "New",
       brickName: "",
       products: [
         {
@@ -353,6 +353,7 @@ export default function CSRForm({ doctorId }) {
         contact: doc.contact,
         group: doc.group,
         brick: doc.brick,
+        investmentLastYear: doc.investmentLastYear,
       }));
       setDoctorList(formatted);
     };
@@ -492,6 +493,7 @@ export default function CSRForm({ doctorId }) {
                       group: selectedDoctor.group,
                       zone: selectedDoctor.zone,
                       location: selectedDoctor.location,
+                      investmentLastYear: selectedDoctor.investmentLastYear,
                     }));
                   } else {
                     setFormData((prev) => ({
@@ -507,6 +509,7 @@ export default function CSRForm({ doctorId }) {
                       zone: "",
                       group: "",
                       location: "",
+                      investmentLastYear: "",
                     }));
                   }
                 }}
@@ -658,33 +661,30 @@ export default function CSRForm({ doctorId }) {
 
               {/* Customer Checkboxes */}
               <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 pt-1">
-  <label className="flex items-center text-sm text-gray-700 space-x-2 print:text-black">
-    <input
-      type="radio"
-      name="customerType"
-      value="Existing"
-      checked={formData.customerType === "Existing"}
-      onChange={handleInputChange}
-      className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
-    />
-    <span>Existing</span>
-  </label>
-  <label className="flex items-center text-sm text-gray-700 space-x-2 print:text-black">
-    <input
-      type="radio"
-      name="customerType"
-      value="New"
-      checked={formData.customerType === "New"}
-      onChange={handleInputChange}
-      className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
-    />
-    <span>New</span>
-  </label>
-</div>
-
+                <label className="flex items-center text-sm text-gray-700 space-x-2 print:text-black">
+                  <input
+                    type="radio"
+                    name="customerType"
+                    value="Existing"
+                    checked={formData.customerType === "Existing"}
+                    onChange={handleInputChange}
+                    className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+                  />
+                  <span>Existing</span>
+                </label>
+                <label className="flex items-center text-sm text-gray-700 space-x-2 print:text-black">
+                  <input
+                    type="radio"
+                    name="customerType"
+                    value="New"
+                    checked={formData.customerType === "New"}
+                    onChange={handleInputChange}
+                    className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+                  />
+                  <span>New</span>
+                </label>
+              </div>
             </div>
-
-            {/* Full Address */}
           </div>
         </section>
 
@@ -875,12 +875,12 @@ export default function CSRForm({ doctorId }) {
                     name="businessValuePresent"
                     value={formData.Business?.[0]?.businessValuePresent || ""}
                     onChange={(e) =>
-              handleBusinessChange(
-                0,
-                "businessValuePresent",
-                e.target.value.replace(/,/g, "")
-              )
-            }
+                      handleBusinessChange(
+                        0,
+                        "businessValuePresent",
+                        e.target.value
+                      )
+                    }
                     className="w-full border px-2 py-1 rounded"
                   />
                 </div>
@@ -889,9 +889,13 @@ export default function CSRForm({ doctorId }) {
                     type="number"
                     name="businessValueExpected"
                     value={formData.Business?.[0]?.businessValueExpected || ""}
-                     onChange={(e) =>
-            handleBusinessChange(0, "businessValueExpected", e.target.value)
-          }
+                    onChange={(e) =>
+                      handleBusinessChange(
+                        0,
+                        "businessValueExpected",
+                        e.target.value
+                      )
+                    }
                     className="w-full border px-2 py-1 rounded"
                   />
                 </div>
@@ -900,9 +904,13 @@ export default function CSRForm({ doctorId }) {
                     type="number"
                     name="businessValueAddition"
                     value={formData.Business?.[0]?.businessValueAddition || ""}
-                  onChange={(e) =>
-            handleBusinessChange(0, "businessValueAddition", e.target.value)
-          }
+                    onChange={(e) =>
+                      handleBusinessChange(
+                        0,
+                        "businessValueAddition",
+                        e.target.value
+                      )
+                    }
                     className="w-full border px-2 py-1 rounded"
                   />
                 </div>

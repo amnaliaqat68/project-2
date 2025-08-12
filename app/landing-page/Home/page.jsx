@@ -28,7 +28,7 @@ export default function HomePage() {
 
       if (response.status === 200) {
         const data = response.data;
-        
+
         console.log("User role:", data.user.role);
 
         // Redirect based on user role
@@ -40,58 +40,62 @@ export default function HomePage() {
           router.push("/SMuser/dashboard");
         } else if (data.user.role === "sm") {
           router.push("/SSMuser/dashboard");
-        } 
-        else if (data.user.role === "gm") {
+        } else if (data.user.role === "gm") {
           router.push("/GMuser/dashboard");
-        } 
-        else {
+        } else {
           setError("Unknown role. Please contact support.");
         }
       }
     } catch (error) {
       console.error("Login failed:", error.response?.data || error.message);
-      setError(error.response?.data?.error || "Login failed. Please try again.");
+      setError(
+        error.response?.data?.error || "Login failed. Please try again."
+      );
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-br  from-indigo-50 via-white to-teal-50">
-      <header className="flex justify-between items-center w-full mx-auto px-6 py-4 bg-white/95 backdrop-blur-lg shadow-lg sticky top-0 z-50 border-b border-indigo-100">
+    <main className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-teal-50">
+      {/* Header */}
+      <header className="flex flex-wrap justify-between items-center w-full px-4 sm:px-6 py-4 bg-white/95 backdrop-blur-lg shadow-lg sticky top-0 z-50 border-b border-indigo-100">
         <div className="flex items-center space-x-3">
           <img
             src="/Medlife logo.png"
             alt="MedLife Logo"
-            width={48}
+            width={40}
             className="transition-transform hover:scale-105"
           />
-          <h1 className="text-3xl font-extrabold text-indigo-900 tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-indigo-900 tracking-tight">
             MedLife
           </h1>
         </div>
-        <Link 
-         href="/landing-page/signup">
-        <button className="bg-indigo-600 text-white px-5 py-2.5 rounded-lg font-semibold hover:bg-indigo-700 transition-colors duration-300 shadow-md">
-          Sign Up
-        </button></Link>
+        <Link href="/landing-page/signup">
+          <button className="mt-3 sm:mt-0 bg-indigo-600 text-white px-4 sm:px-5 py-2 rounded-lg font-semibold hover:bg-indigo-700 transition-colors duration-300 shadow-md">
+            Sign Up
+          </button>
+        </Link>
       </header>
 
-      <section className="w-full bg-gradient-to-br from-white via-indigo-50 to-teal-50 mx-auto px-6 py-28 flex flex-col-reverse md:flex-row gap-16 items-center bg-cover bg-center bg-no-repeat relative">
-        <div className="flex-1 z-10 ml-10">
-          <h2 className="text-5xl font-extrabold  mb-6 text-indigo-900 leading-tight tracking-tight">
+      {/* Hero + Login Section */}
+      <section className="w-full px-4 sm:px-6 py-12 sm:py-28 flex flex-col-reverse md:flex-row gap-8 md:gap-16 items-center">
+        {/* Left Text Section */}
+        <div className="flex-1 z-10 text-center md:text-left">
+          <h2 className="text-3xl sm:text-5xl font-extrabold mb-6 text-indigo-900 leading-tight tracking-tight">
             Empowering MedLife's CSR <br /> with{" "}
             <span className="text-teal-400">MedCSR</span>
           </h2>
-          <p className="text-lg text-black mb-8 max-w-xl leading-relaxed">
+          <p className="text-base sm:text-lg text-black mb-8 max-w-xl mx-auto md:mx-0 leading-relaxed">
             MedCSR is MedLife's internal platform to digitally manage doctor
             commitments, streamline CSR approvals, and ensure ethical compliance
             — all in one place.
           </p>
         </div>
 
-        <div className="w-full max-w-md bg-white p-8 mr-8 rounded-2xl shadow-xl border border-indigo-100 z-10">
-          <h3 className="text-2xl font-semibold text-indigo-900 mb-6 text-center">
+        {/* Login Form */}
+        <div className="w-full max-w-md bg-white p-6 sm:p-8 rounded-2xl shadow-xl border border-indigo-100 z-10">
+          <h3 className="text-xl sm:text-2xl font-semibold text-indigo-900 mb-6 text-center">
             Login to Your Account
           </h3>
           <form onSubmit={handleSubmit} className="space-y-5">
@@ -101,7 +105,7 @@ export default function HomePage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400 transition-all duration-200 bg-gray-50"
+              className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400 bg-gray-50"
             />
             <input
               type="password"
@@ -109,7 +113,7 @@ export default function HomePage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400 transition-all duration-200 bg-gray-50"
+              className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400 bg-gray-50"
             />
             {error && (
               <p className="text-red-500 text-sm font-medium">{error}</p>
@@ -126,7 +130,7 @@ export default function HomePage() {
             New user?{" "}
             <Link
               href="/landing-page/signup"
-              className="text-teal-500 hover:text-teal-600 font-semibold transition-colors duration-200"
+              className="text-teal-500 hover:text-teal-600 font-semibold"
             >
               Sign Up
             </Link>
@@ -134,13 +138,14 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="bg-gradient-to-br from-white via-indigo-50 to-teal-50 py-24 px-6">
-        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+      {/* About Section */}
+      <section className="bg-gradient-to-br from-white via-indigo-50 to-teal-50 py-12 sm:py-24 px-4 sm:px-6">
+        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-10 md:gap-12 items-center">
           <div>
-            <h3 className="text-3xl font-extrabold text-indigo-900 mb-4 tracking-tight">
+            <h3 className="text-2xl sm:text-3xl font-extrabold text-indigo-900 mb-4">
               About MedLife
             </h3>
-            <p className="text-gray-700 leading-relaxed text-lg">
+            <p className="text-gray-700 leading-relaxed text-base sm:text-lg">
               MedLife is a leading pharmaceutical company dedicated to
               delivering safe, effective, and innovative medications. With a
               strong commitment to social responsibility, we ensure our doctors,
@@ -150,16 +155,16 @@ export default function HomePage() {
           </div>
           <div>
             <img
-              src="https://plus.unsplash.com/premium_photo-1681995751324-462c07cf331d?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NjF8fG1lZGljaW5lfGVufDB8fDB8fHww"
+              src="https://plus.unsplash.com/premium_photo-1681995751324-462c07cf331d?w=600&auto=format&fit=crop&q=60"
               alt="MedLife Office"
-              className="rounded-2xl shadow-xl border border-indigo-100 transition-transform hover:scale-105"
+              className="rounded-2xl shadow-xl border border-indigo-100 w-full max-h-[350px] object-cover"
             />
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-white text-center text-sm text-gray-500 py-8 border-t border-indigo-100">
+      <footer className="bg-white text-center text-sm text-gray-500 py-6 border-t border-indigo-100">
         © {new Date().getFullYear()} MedLife Pharmaceuticals. All rights
         reserved.
       </footer>

@@ -83,12 +83,10 @@ const CSRformschema = new mongoose.Schema(
       enum: ["completed", "pending", "rejected"],
       default: "pending",
     },
-    approvedBy: {
-  sm: { name: String, date: Date },
-  gm: { name: String, date: Date },
-  pm: { name: String, date: Date },
-  md: { name: String, date: Date },
-},
+   approvedBy: {
+     sm: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
+    gm: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
+  },
 
     groupOfFE: { type: String },
     patientsMorning: { type: Number },

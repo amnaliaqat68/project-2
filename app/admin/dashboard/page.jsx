@@ -1,6 +1,6 @@
 "use client";
-
-import { useState, useEffect } from "react";
+import React from "react";
+import { useState, useEffect, useRef } from "react";
 
 import {
   FileText,
@@ -12,9 +12,11 @@ import {
   Mail,
   MapPin,
   Edit,
+  CheckCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import { useReactToPrint } from "react-to-print";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -39,7 +41,6 @@ export default function Admin() {
   const [doctors, setDoctors] = useState([]);
   const [csrList, setCsrList] = useState([]);
   const [selectedCSR, setSelectedCSR] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [users, setUsers] = useState([]);
   const [error, setError] = useState("");
   const router = useRouter();
@@ -50,15 +51,12 @@ export default function Admin() {
     totalDoctors: 0,
   });
 
-  const openDetails = (csr) => {
-    setSelectedCSR(csr);
-    setIsModalOpen(true);
-  };
+  const printRef = useRef();
 
-  const closeDetails = () => {
-    setSelectedCSR(null);
-    setIsModalOpen(false);
-  };
+  const handlePrint = useReactToPrint({
+    contentRef: printRef,
+    documentTitle: selectedCSR ? `CSR-${selectedCSR.csrNumber}` : "CSR-Form",
+  });
 
   const handleLogout = async () => {
     try {
@@ -159,7 +157,7 @@ export default function Admin() {
       {/* Header */}
       <header className="bg-white shadow-sm border-b border-blue-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
+          <div className="flex flex-col sm:flex-row justify-between items-center h-auto sm:h-16 py-3 sm:py-0 space-y-3 sm:space-y-0">
             <div className="flex items-center space-x-3">
               <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
                 <FileText className="w-5 h-5 text-white" />
@@ -174,7 +172,7 @@ export default function Admin() {
                 <LogOut className="h-4 w-4 mr-2" />
                 Logout
               </Button>
-              <div className="p-4 flex">
+              <div className="flex items-center gap-1 text-sm sm:text-base">
                 <User className="w-5 h-5 text-gray-500" />
                 {user ? <h1>Welcome, {user.name}!</h1> : <p>Loading...</p>}
               </div>
@@ -196,7 +194,7 @@ export default function Admin() {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           <Card className="border-l-4 border-l-blue-500">
             <CardContent>
               <div className="flex items-center justify-between">
@@ -238,19 +236,22 @@ export default function Admin() {
 
         {/* Tabs */}
         <Tabs defaultValue="dashboard" className="space-y-6">
-          <div className="flex justify-between items-center">
-            <TabsList className="grid w-full max-w-3xl grid-cols-5">
-              <TabsTrigger value="dashboard">User Management</TabsTrigger>
-              <TabsTrigger value="doctors">Doctors</TabsTrigger>
-              <TabsTrigger value="csrs">Approved CSRs</TabsTrigger>
-              <TabsTrigger value="reports">Reports</TabsTrigger>
-              <TabsTrigger value="analytics">Analytics</TabsTrigger>
+          <div className="flex flex-col sm:flex-row sm:justify-between gap-3">
+            <TabsList
+              className=" flex overflow-x-auto md:grid w-full md:max-w-3xl
+    md:grid-cols-5 gap-1 scrollbar-hide"
+            >
+              <TabsTrigger value="dashboard" className="flex-shrink-0 whitespace-nowrap  md:w-full text-center" >User Management</TabsTrigger>
+              <TabsTrigger value="doctors" className="flex-shrink-0 whitespace-nowrap  md:w-full text-center">Doctors</TabsTrigger>
+              <TabsTrigger value="csrs" className="flex-shrink-0 whitespace-nowrap  md:w-full text-center">Approved CSRs</TabsTrigger>
+              <TabsTrigger value="reports"className="flex-shrink-0 whitespace-nowrap  md:w-full text-center" >Reports</TabsTrigger>
+              <TabsTrigger value="analytics" className="flex-shrink-0 whitespace-nowrap  md:w-full text-center">Analytics</TabsTrigger>
             </TabsList>
 
             {userRole === "Admin" && (
               <Button
                 onClick={() => setShowcreateUser(true)}
-                className="bg-blue-600 hover:bg-blue-700 text-white"
+                className="bg-blue-600 hover:bg-blue-700 text-white w-full md:w-auto mt-12"
               >
                 <FileText className="w-4 h-4 mr-2" />
                 Create Users
@@ -328,14 +329,10 @@ export default function Admin() {
                                   onClick={() => deleteUser(user._id)}
                                   variant="outline"
                                   size="sm"
+                                  className="bg-white hover:bg-blue-700 text-black border-gray"
                                 >
                                   Delete
                                 </Button>
-                                {userRole === "Admin" && (
-                                  <Button variant="outline" size="sm">
-                                    <Edit className="w-4 h-4" />
-                                  </Button>
-                                )}
                               </div>
                             </TableCell>
                           </TableRow>
@@ -399,7 +396,7 @@ export default function Admin() {
                           </Button>
 
                           <Button
-                            onClick={() => openDetails(csr)}
+                            onClick={() => setSelectedCSR(csr)}
                             className="bg-blue-600 hover:bg-blue-700 text-white"
                           >
                             View Details
@@ -432,268 +429,419 @@ export default function Admin() {
           </div>
         )}
 
-        {isModalOpen && selectedCSR && (
-          <div
-            className="print-area fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50 p-4
-  print:static print:p-0 print:m-0 print:bg-white print:block print:shadow-none print:overflow-visible print:rounded-none"
-          >
-            <div
-              className="print-area bg-white rounded-2xl shadow-xl max-w-7xl w-full max-h-[95vh] overflow-y-auto relative p-6
-  print:static  print:max-h-full print:shadow-none print:overflow-visible print:rounded-none print:w-full print:p-0 print:m-0 print:h-auto"
-            >
-              <button
-                className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl font-bold transition print:hidden"
-                onClick={closeDetails}
-              >
-                ✕
-              </button>
-
-              <div className="flex justify-between items-center mr-6 mb-6 print:mb-0">
-                <h2 className="text-2xl font-bold text-gray-800 print:text-xl">
-                  CSR #{selectedCSR?.csrNumber || "N/A"}
-                </h2>
-                <div className="hidden print:flex justify-center items-center mb-4">
-                  <img
-                    src="/Medlife logo.png"
-                    alt="Company Logo"
-                    className="h-20 print:h-16"
-                  />
+        {selectedCSR && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+            <div className="bg-white w-[80%] h-[90%] overflow-y-auto rounded-lg shadow-lg p-6 relative">
+              {/* Header Buttons */}
+              <div className="flex justify-between items-center mb-4  top-0 bg-white p-2 z-10">
+                <div className="text-[10px] font-bold flex-col">
+                  <p>CSR #</p>
+                  {selectedCSR.csrNumber}
                 </div>
-                <button
-                  onClick={() => window.print()}
-                  className="bg-blue-600 text-white px-5 py-2 rounded-lg shadow hover:bg-blue-700 transition print:hidden"
-                >
-                  Print
-                </button>
-              </div>
-
-              <div className="grid grid-cols-1 print:grid-cols-4 print:p-0 print:mb-0 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 print:gap-0 mb-6">
-                {[
-                  { label: "FE/MIO/SMIO", value: selectedCSR.filledBy },
-                  { label: "Submitted By", value: selectedCSR.creatorId?.name },
-                  { label: "DSM District", value: selectedCSR.creatorId?.area },
-                  { label: "DSM Group", value: selectedCSR.creatorId?.group },
-                  { label: "Doctor", value: selectedCSR.doctorId?.name },
-                  {
-                    label: "Qualification",
-                    value: selectedCSR.doctorId?.qualification,
-                  },
-                  {
-                    label: "Designation",
-                    value: selectedCSR.doctorId?.designation,
-                  },
-                  {
-                    label: "Speciality",
-                    value: selectedCSR.doctorId?.speciality,
-                  },
-                  {
-                    label: "Hospital Address",
-                    value: selectedCSR.doctorId?.location,
-                  },
-                  {
-                    label: "Full Address",
-                    value: selectedCSR.doctorId?.address,
-                  },
-                  { label: "Brick", value: selectedCSR.Brick },
-                  { label: "Customer Type", value: selectedCSR.customerType },
-                  {
-                    label: "Patients (Morning/Evening)",
-                    value: `${selectedCSR.patientsMorning || 0} / ${
-                      selectedCSR.patientsEvening || 0
-                    }`,
-                  },
-                ].map(({ label, value }, i) => (
-                  <div
-                    key={i}
-                    className="bg-gray-50 border border-gray-200 rounded-xl p-3 print:border-none print:m-0 print:text-sm"
+                <div className="text-lg font-bold">
+                  <h1>CUSTOMER SERVICE REQUEST</h1>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    onClick={() => {
+                      if (printRef.current) handlePrint();
+                    }}
+                    className="bg-green-600 text-white"
                   >
-                    <p className="text-xs text-gray-500 font-medium">{label}</p>
-                    <p className="text-sm text-gray-800 font-semibold">
-                      {value || "N/A"}
-                    </p>
-                  </div>
-                ))}
+                    Print
+                  </Button>
+                  <Button
+                    onClick={() => setSelectedCSR(null)}
+                    className="bg-red-600 text-white"
+                  >
+                    Close
+                  </Button>
+                </div>
               </div>
+              <div
+                ref={printRef}
+                className="bg-white p-6 max-w-[250mm] mx-auto text-sm"
+              >
+                <div className="hidden print:flex items-center justify-between mb-4 border-b pb-2">
+                  <div className="text-xs font-bold text-gray-700">
+                    <p>CSR #</p>
+                    <p>{selectedCSR.csrNumber}</p>
+                  </div>
 
-              {selectedCSR.products?.length > 0 && (
-                <div className="mb-6 print:mb-0  ">
-                  <h3 className="text-xl font-bold mb-4">Products</h3>
-                  <table className="min-w-full table-auto border-collapse">
-                    <thead>
-                      <tr className="bg-gray-100 text-gray-600">
-                        <th className="p-2 border print:p-0">Product</th>
-                        <th className="p-2 border print:p-0">Strength</th>
-                        <th className="p-2 border print:p-0">Present Units</th>
-                        <th className="p-2 border print:p-0">Expected Units</th>
-                        <th className="p-2 border print:p-0">Addition Units</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {selectedCSR.products.map((product, index) => (
-                        <tr key={index} className="border-b">
-                          <td className="p-2 border">
-                            {product.product || "N/A"}
-                          </td>
-                          <td className="p-2 border">
-                            {product.strength || "N/A"}
-                          </td>
-                          <td className="p-2 border">
-                            {product.presentUnits || "N/A"}
-                          </td>
-                          <td className="p-2 border">
-                            {product.expectedUnits || "N/A"}
-                          </td>
-                          <td className="p-2 border">
-                            {product.additionUnits || "N/A"}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                  <div className="text-lg font-bold text-center uppercase flex-1">
+                    Customer Service Request
+                  </div>
+
+                  <div className="flex justify-end">
+                    <img
+                      src="/Medlife logo.png"
+                      alt="Company Logo"
+                      className="h-12 w-auto object-contain"
+                    />
+                  </div>
                 </div>
-              )}
 
-              {selectedCSR.Business?.length > 0 && (
-                <div className="mb-6">
-                  <h3 className="text-xl font-bold mb-4 print:mb-0 print:p-0">
-                    Business Details
-                  </h3>
-                  <table className="min-w-full table-auto border-collapse">
-                    <thead>
-                      <tr className="bg-gray-100 text-gray-600">
-                        <th className="p-2 border">Required Date</th>
-                        <th className="p-2 border">Exact Cost</th>
-                        <th className="p-2 border">BY HO</th>
-                        <th className="p-2 border">ROI%</th>
-                        <th className="p-2 border">Exp. Total Business</th>
-                        <th className="p-2 border">Business Period</th>
-                        <th className="p-2 border">Business Value (Present)</th>
-                        <th className="p-2 border">
-                          Business Value (Expected)
-                        </th>
-                        <th className="p-2 border">
-                          Business Value (Addition)
-                        </th>
-                        <th className="p-2 border">Activity</th>
-                        <th className="p-2 border">Investment Last Year</th>
-                        <th className="p-2 border">Activity Month</th>
-                        <th className="p-2 border">Items Requested</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {selectedCSR.Business.map((business, index) => (
-                        <tr key={index} className="border-b">
-                          <td className="p-2 border print:p-0">
-                            {business.requiredDate || "N/A"}
-                          </td>
-                          <td className="p-2 border print:p-0">
-                            {business.exactCost || "N/A"}
-                          </td>
-                          <td className="p-2 border print:p-0">
-                            {business.byHo || "N/A"}
-                          </td>
-                          <td className="p-2 border print:p-0">
-                            {business.roi || "N/A"}
-                          </td>
-                          <td className="p-2 border">
-                            {business.expectedTotalBusiness || "N/A"}
-                          </td>
-                          <td className="p-2 border print:p-0">
-                            {business.businessPeriod || "N/A"}
-                          </td>
-                          <td className="p-2 border">
-                            {business.businessValuePresent || "N/A"}
-                          </td>
-                          <td className="p-2 border print:p-0">
-                            {business.businessValueExpected || "N/A"}
-                          </td>
-                          <td className="p-2 border print:p-0">
-                            {business.businessValueAddition || "N/A"}
-                          </td>
-                          <td className="p-2 border print:p-0">
-                            {business.activity || "N/A"}
-                          </td>
-                          <td className="p-2 border print:p-0">
-                            {business.investmentLastYear || "N/A"}
-                          </td>
-                          <td className="p-2 border print:p-0">
-                            {business.activityMonth || "N/A"}
-                          </td>
-                          <td className="p-2 border print:p-0">
-                            {business.itemRequested || "N/A"}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-
-              {selectedCSR.chemists?.length > 0 && (
-                <div className="mb-6">
-                  <h3 className="text-xl font-bold mb-4">Chemists</h3>
-                  <table className="min-w-full table-auto border-collapse">
-                    <thead>
-                      <tr className="bg-gray-100 text-gray-600">
-                        <th className="p-2 border">Name</th>
-                        <th className="p-2 border">Business Share</th>
-                        <th className="p-2 border">Other Doctors</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {selectedCSR.chemists.map((chemist, index) => (
-                        <tr key={index} className="border-b">
-                          <td className="p-2 border">
-                            {chemist.chemistName || "N/A"}
-                          </td>
-                          <td className="p-2 border">
-                            {chemist.businessShare || "N/A"}
-                          </td>
-                          <td className="p-2 border">
-                            {chemist.otherDoctors || "N/A"}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-
-              {selectedCSR.ledgerSummary?.length > 0 && (
-                <div className="mb-6 print:mb-0">
-                  <h3 className="text-xl font-bold mb-4">Ledger Summary</h3>
-                  <table className="min-w-full table-auto border-collapse">
-                    <thead>
-                      <tr className="bg-gray-100 text-gray-600">
-                        <th className="p-2 border print:p-0">Month</th>
-                        <th className="p-2 border print:p-0">Sale</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {selectedCSR.ledgerSummary.map((summary, index) => (
-                        <tr key={index} className="border-b">
-                          <td className="p-2 border print:p-0">
-                            {summary.month || "N/A"}
-                          </td>
-                          <td className="p-2 border print:p-0">
-                            {summary.sale || "N/A"}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-
-              <div className="mt-6 space-y-3 print:mt-4">
-                <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 space-y-2 print:border">
+                <div className="grid w-[800px] grid-cols-4 gap-6 mb-2  ">
                   <p>
-                    <strong>Investment Instructions:</strong>{" "}
-                    {selectedCSR.investmentInstructions || "N/A"}
+                    <strong>Submitted By:</strong>{" "}
+                    {selectedCSR.creatorId?.name || "N/A"}
                   </p>
                   <p>
-                    <strong>Comments:</strong> {selectedCSR.comments || "N/A"}
+                    <strong>District:</strong>{" "}
+                    {selectedCSR.creatorId?.area || "N/A"}
                   </p>
+                  <p>
+                    <strong> FE/MIO/SMIO:</strong>{" "}
+                    {selectedCSR.filledBy || "N/A"}
+                  </p>
+                  <p>
+                    <strong>Doctor:</strong>{" "}
+                    {selectedCSR.doctorId?.name || "N/A"}
+                  </p>
+                  <p>
+                    <strong>Qualification:</strong>{" "}
+                    {selectedCSR.doctorId?.qualification || "N/A"}
+                  </p>
+                  <p>
+                    <strong>Designation:</strong>{" "}
+                    {selectedCSR.doctorId?.designation || "N/A"}
+                  </p>
+                  <p>
+                    <strong>Speciality:</strong>{" "}
+                    {selectedCSR.doctorId?.speciality || "N/A"}
+                  </p>
+                  <p>
+                    <strong>District:</strong>{" "}
+                    {selectedCSR.doctorId?.district || "N/A"}
+                  </p>
+                  <p className="col-span-2">
+                    <strong>Address:</strong>{" "}
+                    {selectedCSR.doctorId?.address || "N/A"}
+                  </p>
+                  <p>
+                    <strong>Brick:</strong>{" "}
+                    {selectedCSR.doctorId?.brick || "N/A"}
+                  </p>
+                  <p>
+                    <strong>Group:</strong>{" "}
+                    {selectedCSR.doctorId?.group || "N/A"}
+                  </p>
+                  <p className="text-[12px]">
+                    <strong>Customer Type:</strong>{" "}
+                    {selectedCSR.customerType || "N/A"}
+                  </p>
+                  <p className="text-[12px]">
+                    <strong>Patients (M/E):</strong>{" "}
+                    {selectedCSR.patientsMorning || 0} /{" "}
+                    {selectedCSR.patientsEvening || 0}
+                  </p>
+                </div>
+
+                {/* Products */}
+                {selectedCSR.products?.length > 0 && (
+                  <>
+                    <h2 className="font-semibold text-xs mb-1">Products</h2>
+                    <table className="w-full border-collapse  border mb-2 text-xs">
+                      <thead className="bg-gray-100 text-[8px]">
+                        <tr>
+                          <th className="border p-1">Product</th>
+                          <th className="border p-1">Strength</th>
+                          <th className="border p-1">Present</th>
+                          <th className="border p-1">Expected</th>
+                          <th className="border p-1">Addition</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {selectedCSR.products.map((p, i) => (
+                          <tr key={i}>
+                            <td className="border p-1 text-[9px]">
+                              {p.product}
+                            </td>
+                            <td className="border p-1 text-[9px]">
+                              {p.strength}
+                            </td>
+                            <td className="border p-1 text-[9px]">
+                              {p.presentUnits}
+                            </td>
+                            <td className="border p-1 text-[9px]">
+                              {p.expectedUnits}
+                            </td>
+                            <td className="border p-1 text-[9px]">
+                              {p.additionUnits}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                      <tfoot>
+                        <tr className="font-bold text-[9px] text-gray-600 text-center bg-gray-50">
+                          <td
+                            colSpan={2}
+                            className="border p-1 print:p-1 print:text-[9px]"
+                          >
+                            Business Value
+                          </td>
+                          <td className="border p-1 print:p-1">
+                            {selectedCSR.Business?.[0]?.businessValuePresent
+                              ? Number(
+                                  selectedCSR.Business?.[0]
+                                    ?.businessValuePresent
+                                ).toLocaleString()
+                              : "N/A"}
+                          </td>
+                          <td className="border p-1 print:p-1">
+                            {selectedCSR.Business?.[0]?.businessValueExpected
+                              ? Number(
+                                  selectedCSR.Business?.[0]
+                                    ?.businessValueExpected
+                                ).toLocaleString()
+                              : "N/A"}
+                          </td>
+                          <td className="border p-1 print:p-1">
+                            {selectedCSR.Business?.[0]?.businessValueAddition
+                              ? Number(
+                                  selectedCSR.Business?.[0]
+                                    ?.businessValueAddition
+                                ).toLocaleString()
+                              : "N/A"}
+                          </td>
+                        </tr>
+                      </tfoot>
+                    </table>
+                  </>
+                )}
+
+                {/* Business Details */}
+
+                {selectedCSR.Business?.length > 0 && (
+                  <div className="mb-2 grid grid-cols-1 md:grid-cols-2 gap-4 print:grid-cols-2 print:gap-2 print:mb-0">
+                    {/* Heading */}
+                    <h3 className="text-sm font-bold mb-1 col-span-full print:mb-0 print:text-[9px]">
+                      Business Details
+                    </h3>
+
+                    {/* Business Info Table */}
+                    <table className="min-w-full table-auto border-collapse border border-gray-300 text-center text-[8px] print:text-[9px]">
+                      <thead>
+                        <tr className="bg-gray-100 text-gray-600">
+                          <th colSpan={2} className="p-1 border text-center">
+                            Activity Info
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {selectedCSR.Business.map((business, index) => (
+                          <React.Fragment key={index}>
+                            <tr>
+                              <td className="p-1 border print:w-[100px]">
+                                Required Date
+                              </td>
+                              <td className="p-1 border">
+                                {business.requiredDate
+                                  ? new Date(
+                                      business.requiredDate
+                                    ).toLocaleDateString()
+                                  : "N/A"}
+                              </td>
+                            </tr>
+                            <tr>
+                              <td className="p-1 border">Exact Cost</td>
+                              <td className="p-1 border">
+                                {business.exactCost
+                                  ? Number(business.exactCost).toLocaleString()
+                                  : "N/A"}
+                              </td>
+                            </tr>
+                            <tr>
+                              <td className="p-1 border">BY HO</td>
+                              <td className="p-1 border">
+                                {business.byHo || "N/A"}
+                              </td>
+                            </tr>
+                            <tr>
+                              <td className="p-1 border">Items Requested</td>
+                              <td className="p-1 border">
+                                {business.itemRequested || "N/A"}
+                              </td>
+                            </tr>
+                          </React.Fragment>
+                        ))}
+                      </tbody>
+                    </table>
+
+                    {/* Financial Summary Table */}
+                    <table className="min-w-full table-auto border-collapse border border-gray-300 text-center text-[9px] print:text-[9px]">
+                      <thead>
+                        <tr className="bg-gray-100 text-gray-600">
+                          <th colSpan={2} className="p-1 border text-center">
+                            Financial Summary
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {selectedCSR.Business.map((business, index) => (
+                          <React.Fragment key={index}>
+                            <tr>
+                              <td className="p-1 border">ROI%</td>
+                              <td className="p-1 border">
+                                {business.roi || "N/A"}
+                              </td>
+                            </tr>
+                            <tr>
+                              <td className="p-1 border">
+                                Exp. Total Business
+                              </td>
+                              <td className="p-1 border">
+                                {business.expectedTotalBusiness
+                                  ? Number(
+                                      business.expectedTotalBusiness
+                                    ).toLocaleString()
+                                  : "N/A"}
+                              </td>
+                            </tr>
+                            <tr>
+                              <td className="p-1 border">Business Period</td>
+                              <td className="p-1 border">
+                                {business.businessPeriod || "N/A"}
+                              </td>
+                            </tr>
+                            <tr>
+                              <td className="p-1 border">
+                                Investment Last 12 Months
+                              </td>
+                              <td className="p-1 border">
+                                {business.investmentLastYear
+                                  ? Number(
+                                      business.investmentLastYear
+                                    ).toLocaleString()
+                                  : "N/A"}
+                              </td>
+                            </tr>
+                          </React.Fragment>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+
+                {/* Chemists */}
+                {selectedCSR.chemists?.length > 0 && (
+                  <>
+                    <h2 className="font-semibold text-sm mb-2">Chemists</h2>
+                    <table className="w-full border-collapse border text-xs mb-6">
+                      <thead className="bg-gray-100 text-[10px]">
+                        <tr>
+                          <th className="border p-1">Name</th>
+                          <th className="border p-1">Business Share</th>
+                          <th className="border p-1">Other Doctors</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {selectedCSR.chemists.map((c, i) => (
+                          <tr key={i}>
+                            <td className="border p-1 text-[9px]">
+                              {c.chemistName}
+                            </td>
+                            <td className="border p-1 text-[9px]">
+                              {c.businessShare}
+                            </td>
+                            <td className="border p-1 text-[9px]">
+                              {c.otherDoctors}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </>
+                )}
+
+                {/* Ledger Summary */}
+                {selectedCSR.ledgerSummary?.length > 0 && (
+                  <>
+                    <h2 className="font-semibold text-sm mb-2">
+                      Ledger Summary
+                    </h2>
+                    <table className="w-full border-collapse border text-xs mb-6">
+                      <thead className="bg-gray-100 text-[10px]">
+                        <tr>
+                          <th className="border p-1">Month</th>
+                          <th className="border p-1">Sale</th>
+                          <th className="border p-1">Month</th>
+                          <th className="border p-1">Sale</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {Array.from({
+                          length: Math.ceil(
+                            selectedCSR.ledgerSummary.length / 2
+                          ),
+                        }).map((_, rowIndex) => {
+                          const first = selectedCSR.ledgerSummary[rowIndex * 2];
+                          const second =
+                            selectedCSR.ledgerSummary[rowIndex * 2 + 1];
+                          return (
+                            <tr key={rowIndex}>
+                              <td className="border text-[9px] p-1">
+                                {first?.month || ""}
+                              </td>
+                              <td className="border text-[9px] p-1">
+                               {first?.sale != null ? Number(first.sale).toLocaleString() : ""}{first?.sale || ""}
+                              </td>
+                              <td className="border text-[9px] p-1">
+                                {second?.month || ""}
+                              </td>
+                              <td className="border text-[9px] p-1">
+                                {second?.sale != null ? Number(second.sale).toLocaleString() : ""}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </>
+                )}
+
+                {/* Comments */}
+                <h2 className="font-semibold text-sm mb-2">
+                  Instructions & Comments
+                </h2>
+                <p className="text-[8px]">
+                  <strong>Investment Instructions:</strong>{" "}
+                  {selectedCSR.investmentInstructions || "N/A"}
+                </p>
+                <p className="text-[8px]">
+                  <strong>Comments:</strong> {selectedCSR.comments || "N/A"}
+                </p>
+
+                {/* Approval Signatures */}
+                <div className="grid grid-cols-4 gap-6 mt-8">
+                  {["sm", "gm", "pm", "md"].map((role) => {
+                    const approver = selectedCSR?.approvedBy?.[role];
+
+                    const roleStatus = selectedCSR?.[`${role}Status`];
+
+                    return (
+                      <div key={role} className="flex flex-col items-center">
+                        <div className="w-full border-b h-6"></div>
+
+                        <p className="mt-2 text-xs font-medium">
+                          {role.toUpperCase()}
+                        </p>
+
+                        {approver ? (
+                          <div className="flex items-center mt-1 space-x-2">
+                            <span className="text-xs">{`Approved by ${approver.name}`}</span>
+                            {roleStatus === "approved" && (
+                              <CheckCircle className="w-4 h-4 text-green-500" />
+                            )}
+                          </div>
+                        ) : (
+                          <span className="text-xs text-gray-500">
+                            Pending Approval
+                          </span>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             </div>

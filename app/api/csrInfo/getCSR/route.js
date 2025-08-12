@@ -8,6 +8,8 @@ export async function GET() {
     const csrs = await CSRform.find()
       .populate("creatorId")
       .populate("doctorId")
+      .populate("approvedBy.sm", "name")
+      .populate("approvedBy.gm", "name")
       .sort({ createdAt: -1 });
 
     return NextResponse.json(csrs);

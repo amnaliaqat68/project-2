@@ -1,10 +1,11 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { toast } from "react-toastify";
 
-export default function AddDoctorForm() {
+export default function AddDoctorForm({ doctor }) {
+  const { id } = useParams();
   const [form, setForm] = useState({
     name: "",
     speciality: "",
@@ -16,12 +17,32 @@ export default function AddDoctorForm() {
     qualification: "",
     designation: "",
     status: "active",
-    relationship: "strong",
+    investmentLastYear: "",
     email: "",
     contact: "",
     totalValue: "",
   });
   const router = useRouter();
+
+  useEffect(() => {
+    if (doctor) {
+      setForm({
+        name: doctor.name || "",
+        speciality: doctor.speciality || "",
+        contact: doctor.contact || "",
+        email: doctor.email || "",
+        designation: doctor.designation || "",
+        address: doctor.address || "",
+        district: doctor.district || "",
+        group: doctor.group || "",
+        brick: doctor.brick || "",
+        zone: doctor.zone || "",
+        investmentLastYear: doctor.investmentLastYear || "",
+        qualification: doctor.qualification || "",
+      });
+    }
+  }, [doctor]);
+  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -30,32 +51,18 @@ export default function AddDoctorForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Doctor Submitted:", form);
-
     try {
-      const response = await axios.post("/api/doctorsManage/doctors", form);
-      console.log("Response:", response.data);
-      console.log("Payload Sent to Backend:", JSON.stringify(form, null, 2));
-      toast.success("Doctor submitted successfully!");
-      setForm({
-        name: "",
-        speciality: "",
-        district: "",
-        address: "",
-        brick: "",
-        group: "",
-        zone: "",
-        qualification: "",
-        designation: "",
-        status: "active",
-        relationship: "strong",
-        email: "",
-        contact: "",
-        totalValue: "",
-      });
+      if (id) {
+        await axios.patch(`/api/doctorsManage/updateDoc/${id}`, form);
+        toast.success("Doctor updated successfully!");
+      } else {
+        await axios.post("/api/doctorsManage/doctors", form);
+        toast.success("Doctor added successfully!");
+      }
       router.push("/admin/dashboard");
     } catch (error) {
-      console.error("Error submitting doctor:", error);
+      console.error("Error saving doctor:", error);
+      toast.error("Failed to save doctor.");
     }
   };
 
@@ -215,18 +222,14 @@ export default function AddDoctorForm() {
           {/* Relationship */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Relationship
+              Investment last 12 Months
             </label>
-            <select
-              name="relationship"
-              value={form.relationship}
+            <input
+              name="investmentLastYear"
+              value={form.investmentLastYear}
               onChange={handleChange}
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-200 focus:outline-none"
-            >
-              <option value="strong">Strong</option>
-              <option value="moderate">moderate</option>
-              <option value="new">New</option>
-            </select>
+            />
           </div>
 
           {/* Contact */}
@@ -256,9 +259,6 @@ export default function AddDoctorForm() {
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-200 focus:outline-none"
             />
           </div>
-
-      
-         
 
           {/* Submit Button */}
           <div className="text-right">

@@ -35,6 +35,7 @@ const CSRList = () => {
   const [statusFilter, setStatusFilter] = useState("all");
   const [csrList, setCsrList] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [user, setUser] = useState(null);
   const router = useRouter();
 
   const [totalCSR, settotalCSR] = useState([]);
@@ -362,7 +363,9 @@ const CSRList = () => {
                       {selectedCSR.Business.map((business, index) => (
                         <React.Fragment key={index}>
                           <tr>
-                            <td className="p-1 border print:w-[100px]">Required Date</td>
+                            <td className="p-1 border print:w-[100px]">
+                              Required Date
+                            </td>
                             <td className="p-1 border">
                               {business.requiredDate
                                 ? new Date(
@@ -506,13 +509,17 @@ const CSRList = () => {
                               {first?.month || ""}
                             </td>
                             <td className="border text-[9px] p-1">
-                              {first?.sale || ""}
+                              {first?.sale
+                                ? Number(first.sale).toLocaleString("en-PK")
+                                : "N/A"}
                             </td>
                             <td className="border text-[9px] p-1">
                               {second?.month || ""}
                             </td>
                             <td className="border text-[9px] p-1">
-                              {second?.sale || ""}
+                              {second?.sale
+                                ? Number(second.sale).toLocaleString("en-PK")
+                                : "N/A"}
                             </td>
                           </tr>
                         );
@@ -537,18 +544,37 @@ const CSRList = () => {
               {/* Approval Signatures */}
               <div className="grid grid-cols-4 gap-6 mt-8">
                 {["sm", "gm", "pm", "md"].map((role) => {
+                  const statusKey = role + "Status"; // e.g. smStatus
+                  const isApproved = selectedCSR?.[statusKey] === "approved";
+
                   const approver = selectedCSR?.approvedBy?.[role];
+                  const approverName =
+                    role === "sm" || role === "gm"
+                      ? approver?.name || "N/A"
+                      : null;
+
                   return (
                     <div key={role} className="flex flex-col items-center">
-                      <div className="w-full border-b h-6"></div>
-                      <p className="mt-2 text-xs font-medium">
+                    
+                      {isApproved && (
+                        <div className="flex flex-col items-center">
+                          <div className="flex items-center ">
+                            <CheckCircle className="text-green-500" size={18} />
+                            <span>Approved</span>
+                          </div>
+                          {approverName && (
+                            <span className="text-[8px] text-gray-600">
+                              {approverName}
+                            </span>
+                          )}
+                        </div>
+                      )}
+                      <div className="w-full border-b h-6 mb-2"></div>
+
+                      {/* Role label */}
+                      <p className="mt-auto text-xs font-medium">
                         {role.toUpperCase()}
                       </p>
-                      {approver && (
-                        <span className="text-green-700 text-xs">
-                          Approved by {approver.name}
-                        </span>
-                      )}
                     </div>
                   );
                 })}

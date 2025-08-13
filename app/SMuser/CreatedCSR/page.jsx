@@ -5,6 +5,7 @@ import Select from "react-select";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
+import { Trash2 } from "lucide-react";
 
 export default function CSRForm({ doctorId }) {
   const [isClearable, setIsClearable] = useState(true);
@@ -406,72 +407,101 @@ export default function CSRForm({ doctorId }) {
     </div>
   );
   return (
-    <div className="bg-gray-100 min-h-screen py-2">
+    <div className="bg-blue-100 min-h-screen py-2 rounded-md">
       <Head>
         <title>CSR Performa Form</title>
       </Head>
 
+      {/* Hero section with background image */}
+
       <form
         onSubmit={handleSubmit}
-        className="max-w-6xl mx-auto p-5 space-y-4 bg-white shadow-2xl rounded-2xl border border-gray-200"
+        className="max-w-6xl mx-auto p-5 space-y-4 bg-white rounded-md  "
       >
         {/* Title */}
         <div className="text-center">
-          <h1 className="text-4xl font-bold text-gray-900">
-            CSR Performa Form
-          </h1>
-          <p className="text-gray-500 mt-2 text-sm">
-            Fill out the form carefully. All sections are required.
-          </p>
+          <section
+            className="relative bg-cover bg-no-repeat bg-center w-full h-48 rounded-md  flex items-center justify-center"
+            style={{
+              backgroundImage:
+                "url('https://media.istockphoto.com/id/1448152453/vector/big-data-technology-and-data-science-illustration-data-flow-concept-querying-analysing.jpg?s=2048x2048&w=is&k=20&c=RJqfVGXDYkWmwIohM7hsaRY5Lz6n_I8UIcftlKMnioM=')",
+            }}
+          >
+            <h1 className="text-3xl md:text-4xl font-bold text-white bg-black/50 px-4 py-2 rounded-lg">
+              CSR Form
+            </h1>
+          </section>
         </div>
-        <section className="w-full flex space-x-5">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1 print:text-black">
-              SMIO/FE
-            </label>
-            <input
-              type="text"
-              name="filledBy"
-              placeholder="name of CSR User"
-              className="w-[540px] px-3 sm:px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 print:border-gray-400 print:shadow-none"
-              value={formData.filledBy}
-              onChange={handleInputChange}
-            />
+        <section className="w-full flex flex-col space-y-8">
+          {/* SMIO/FE Section */}
+          <div className="flex flex-col md:flex-row md:space-x-6 space-y-6 md:space-y-0">
+            <div className="flex-1">
+              <label
+                htmlFor="filledBy"
+                className="block text-sm font-semibold text-gray-800 mb-2 print:text-black"
+              >
+                SMIO / FE
+              </label>
+              <input
+                type="text"
+                id="filledBy"
+                name="filledBy"
+                placeholder="Enter CSR User's Name"
+                className="w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 placeholder-gray-400 shadow-sm
+          focus:border-blue-500 focus:ring-2 focus:ring-blue-400 focus:outline-none transition"
+                value={formData.filledBy}
+                onChange={handleInputChange}
+              />
+            </div>
+
+            <div className="flex-1">
+              <label
+                htmlFor="groupOfFE"
+                className="block text-sm font-semibold text-gray-800 mb-2 print:text-black"
+              >
+                Group of SMIO / FE
+              </label>
+              <select
+                id="groupOfFE"
+                name="groupOfFE"
+                value={formData.groupOfFE}
+                onChange={handleInputChange}
+                required
+                className="w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900
+          focus:border-blue-500 focus:ring-2 focus:ring-blue-400 focus:outline-none shadow-sm transition"
+              >
+                <option value="" disabled>
+                  Select a group
+                </option>
+                <option value="corporate">Corporate</option>
+                <option value="jupiter">Jupiter</option>
+                <option value="venus">Venus</option>
+                <option value="dynamic">Dynamic</option>
+              </select>
+            </div>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1 print:text-black">
-              Group of SMIO/FE
-            </label>
-            <select
-              name="groupOfFE"
-              id="groupOfFE"
-              value={formData.groupOfFE}
-              onChange={handleInputChange}
-              required
-              className="w-[540px] px-3 sm:px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 print:border-gray-400 print:shadow-none"
+
+          {/* Doctor Details Section */}
+          <section
+            className="bg-white border border-gary-200 rounded-md p-6 print:bg-white print:shadow-none print:p-0 print:border-none"
+            aria-labelledby="doctor-details-title"
+          >
+            <h2
+              id="doctor-details-title"
+              className="text-1xl font-bold text-gray-900 mb-6 border-b text-center border-gray-200 pb-3"
             >
-              <option value="">Select a group</option>
-              <option value="corporate">Corporate</option>
-              <option value="jupiter">Jupiter</option>
-              <option value="venus">Venus</option>
-              <option value="dynamic">Dynamic</option>
-            </select>
-          </div>
-        </section>
+              Doctor Details
+            </h2>
 
-        {/* Doctor Details */}
-        <section className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl shadow-md p-2 sm:p-4 border border-gray-200 print:bg-white print:shadow-none print:p-0 print:border-none">
-          <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-4 sm:mb-6 border-b pb-2">
-            Doctor Details
-          </h2>
-
-          <div className="grid grid-cols-2 md:grid-cols-2 gap-4 sm:gap-6 print:grid-cols-1">
-            {/* Doctor Dropdown */}
-            <div className="col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1 print:text-black">
+            <div className="mb-6">
+              <label
+                htmlFor="doctor-select"
+                className="block text-sm font-semibold text-gray-800 mb-2 print:text-black"
+              >
                 Doctor Name
               </label>
               <Select
+                id="doctor-select"
                 className="react-select-container"
                 classNamePrefix="react-select"
                 placeholder="Search or select a doctor..."
@@ -520,183 +550,181 @@ export default function CSRForm({ doctorId }) {
               />
             </div>
 
-            {/* Fields BELOW Doctor Dropdown */}
-            <div className="col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4">
-              {/* Designation */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1 print:text-black">
-                  Designation
-                </label>
-                <input
-                  type="text"
-                  name="drDesignation"
-                  value={formData.drDesignation}
-                  onChange={handleInputChange}
-                  className="w-full px-3 sm:px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 print:border-gray-400 print:shadow-none"
-                  placeholder="Enter designation"
-                />
-              </div>
-
-              {/* Qualification */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1 print:text-black">
-                  Qualification
-                </label>
-                <input
-                  type="text"
-                  name="qualification"
-                  value={formData.qualification || ""}
-                  onChange={handleInputChange}
-                  className="w-full px-3 sm:px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 print:border-gray-400 print:shadow-none"
-                  placeholder="Enter qualification"
-                />
-              </div>
-
-              {/* Speciality */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1 print:text-black">
-                  Speciality
-                </label>
-                <input
-                  type="text"
-                  name="speciality"
-                  value={formData.speciality}
-                  onChange={handleInputChange}
-                  className="w-full px-3 sm:px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 print:border-gray-400 print:shadow-none"
-                  placeholder="Enter speciality"
-                />
-              </div>
+            {/* Doctor Info Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+              {[
+                {
+                  label: "Designation",
+                  name: "drDesignation",
+                  placeholder: "Enter designation",
+                },
+                {
+                  label: "Qualification",
+                  name: "qualification",
+                  placeholder: "Enter qualification",
+                },
+                {
+                  label: "Speciality",
+                  name: "speciality",
+                  placeholder: "Enter speciality",
+                },
+              ].map(({ label, name, placeholder }) => (
+                <div key={name}>
+                  <label
+                    htmlFor={name}
+                    className="block text-sm font-semibold text-gray-800 mb-2 print:text-black"
+                  >
+                    {label}
+                  </label>
+                  <input
+                    type="text"
+                    id={name}
+                    name={name}
+                    value={formData[name] || ""}
+                    onChange={handleInputChange}
+                    placeholder={placeholder}
+                    className="w-full rounded-md border border-gray-300 px-4 py-3
+              focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-500 transition shadow-sm"
+                  />
+                </div>
+              ))}
             </div>
-            {/* Cell No */}
-            <div className="col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1 print:text-black">
-                  Cell No
-                </label>
-                <input
-                  type="text"
-                  name="contact"
-                  value={formData.contact}
-                  onChange={handleInputChange}
-                  className="w-full px-3 sm:px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 print:border-gray-400 print:shadow-none"
-                  placeholder="0300xxxxxxx"
-                />
-              </div>
 
-              {/* Group */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1 print:text-black">
-                  Group
-                </label>
-                <input
-                  type="text"
-                  name="group"
-                  value={formData.group}
-                  onChange={handleInputChange}
-                  className="w-full px-3 sm:px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 print:border-gray-400 print:shadow-none"
-                  placeholder="Enter group"
-                />
-              </div>
-
-              {/* Brick Name */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1 print:text-black">
-                  Brick Name
-                </label>
-                <input
-                  type="text"
-                  name="brick"
-                  value={formData.brick}
-                  onChange={handleInputChange}
-                  className="w-full px-3 sm:px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 print:border-gray-400 print:shadow-none"
-                  placeholder="Enter brick name"
-                />
-              </div>
+            {/* Contact Info Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+              {[
+                {
+                  label: "Cell No",
+                  name: "contact",
+                  placeholder: "0300xxxxxxx",
+                },
+                { label: "Group", name: "group", placeholder: "Enter group" },
+                {
+                  label: "Brick Name",
+                  name: "brick",
+                  placeholder: "Enter brick name",
+                },
+              ].map(({ label, name, placeholder }) => (
+                <div key={name}>
+                  <label
+                    htmlFor={name}
+                    className="block text-sm font-semibold text-gray-800 mb-2 print:text-black"
+                  >
+                    {label}
+                  </label>
+                  <input
+                    type="text"
+                    id={name}
+                    name={name}
+                    value={formData[name] || ""}
+                    onChange={handleInputChange}
+                    placeholder={placeholder}
+                    className="w-full rounded-md border border-gray-300 px-4 py-3
+              focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-500 transition shadow-sm"
+                  />
+                </div>
+              ))}
             </div>
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1 print:text-black">
+
+            {/* Address / Clinic / Hospital */}
+            <div className="mb-6">
+              <label
+                htmlFor="address"
+                className="block text-sm font-semibold text-gray-800 mb-2 print:text-black"
+              >
                 Full Address / Clinic Name / Hospital Name
               </label>
-              <div>
-                <textarea
-                  name="address"
-                  value={formData.address}
-                  onChange={handleInputChange}
-                  className="w-full px-3 sm:px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Clinic or Hospital Name"
-                />
-              </div>
+              <textarea
+                id="address"
+                name="address"
+                value={formData.address}
+                onChange={handleInputChange}
+                placeholder="Clinic or Hospital Name"
+                className="w-full rounded-md border border-gray-300 px-4 py-3 resize-y
+          focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-500 transition shadow-sm"
+                rows={3}
+              />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full mt-4">
-              {/* Patients Morning */}
+            {/* Patients & Customer Type Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1 print:text-black">
+                <label
+                  htmlFor="patientsMorning"
+                  className="block text-sm font-semibold text-gray-800 mb-2 print:text-black"
+                >
                   Patients (Morning)
                 </label>
                 <input
                   type="number"
+                  id="patientsMorning"
                   name="patientsMorning"
-                  value={formData.patientsMorning}
+                  value={formData.patientsMorning || ""}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 print:border-gray-400 print:shadow-none"
                   placeholder="e.g., 30"
+                  className="w-full rounded-md border border-gray-300 px-4 py-3
+            focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-500 transition shadow-sm"
+                  min={0}
                 />
               </div>
 
-              {/* Patients Evening */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1 print:text-black">
+                <label
+                  htmlFor="patientsEvening"
+                  className="block text-sm font-semibold text-gray-800 mb-2 print:text-black"
+                >
                   Patients (Evening)
                 </label>
                 <input
                   type="number"
+                  id="patientsEvening"
                   name="patientsEvening"
-                  value={formData.patientsEvening}
+                  value={formData.patientsEvening || ""}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 print:border-gray-400 print:shadow-none"
                   placeholder="e.g., 20"
+                  className="w-full rounded-md border border-gray-300 px-4 py-3
+            focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-500 transition shadow-sm"
+                  min={0}
                 />
               </div>
 
-              {/* Customer Checkboxes */}
-              <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 pt-1">
-                <label className="flex items-center text-sm text-gray-700 space-x-2 print:text-black">
-                  <input
-                    type="radio"
-                    name="customerType"
-                    value="Existing"
-                    checked={formData.customerType === "Existing"}
-                    onChange={handleInputChange}
-                    className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
-                  />
-                  <span>Existing</span>
-                </label>
-                <label className="flex items-center text-sm text-gray-700 space-x-2 print:text-black">
-                  <input
-                    type="radio"
-                    name="customerType"
-                    value="New"
-                    checked={formData.customerType === "New"}
-                    onChange={handleInputChange}
-                    className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
-                  />
-                  <span>New</span>
-                </label>
-              </div>
+              <fieldset className="flex flex-col sm:flex-row items-start sm:items-center space-y-3 sm:space-y-0 sm:space-x-6 mt-1">
+                <legend className="sr-only">Customer Type</legend>
+                {["Existing", "New"].map((type) => (
+                  <label
+                    key={type}
+                    className="flex items-center space-x-2 text-sm font-semibold text-gray-700 print:text-black cursor-pointer"
+                  >
+                    <input
+                      type="radio"
+                      name="customerType"
+                      value={type}
+                      checked={formData.customerType === type}
+                      onChange={handleInputChange}
+                      className="h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                    />
+                    <span>{type}</span>
+                  </label>
+                ))}
+              </fieldset>
             </div>
-          </div>
+          </section>
         </section>
-
         {/* Product Commitments */}
-        <section className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-3 sm:p-4 border border-gray-200 print:bg-white print:shadow-none print:p-0 print:border-none">
-          <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-3 sm:mb-4 border-b pb-2">
-            Product Commitments
-          </h3>
+        <section
+          className=" bg-white border border-gray-200 rounded-md p-4 print:bg-white print:shadow-none print:p-0 print:border-none"
+          aria-labelledby="product-details-title"
+        >
+          <h2
+            id="product-details-title"
+            className="text-1xl font-bold text-gray-900 mb-4 border-b text-center border-gray-200 pb-3"
+          >
+            Product Details
+          </h2>
 
           <div className="overflow-x-auto print:overflow-visible">
             <table className="min-w-full text-sm text-left border border-gray-200 rounded-lg print:border-black">
-              <thead className="bg-gray-100 text-gray-700 uppercase text-xs print:bg-white print:border-b print:border-black">
+              <thead className=" text-gray-700  text-sm print:bg-white print:border-b print:border-black">
                 <tr>
                   {[
                     "#",
@@ -709,7 +737,8 @@ export default function CSRForm({ doctorId }) {
                   ].map((header) => (
                     <th
                       key={header}
-                      className="border px-3 py-2 print:border-black"
+                      className="border px-4 py-3 print:border-black"
+                      scope="col"
                     >
                       {header}
                     </th>
@@ -724,19 +753,23 @@ export default function CSRForm({ doctorId }) {
                       index % 2 === 0 ? "bg-white" : "bg-gray-50"
                     } hover:bg-gray-100 print:bg-white`}
                   >
-                    <td className="border px-3 py-2 print:border-black">
+                    <td className="border px-4 py-3 print:border-black">
                       {index + 1}
                     </td>
-                    <td className="border px-3 py-2 print:border-black">
+
+                    <td className="border px-4 py-2 print:border-black">
                       <select
                         value={item.product}
                         onChange={(e) =>
                           handleProductChange(index, "product", e.target.value)
                         }
-                        className="w-full px-2 py-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 print:border-gray-400 print:shadow-none"
+                        className="w-full rounded-md border border-gray-300 px-3 py-2
+                  focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-500 transition shadow-sm print:border-gray-400 print:shadow-none"
                         required
                       >
-                        <option value="">Select Product</option>
+                        <option value="" disabled>
+                          Select Product
+                        </option>
                         {productsList.map((p, idx) => (
                           <option key={idx} value={p}>
                             {p}
@@ -744,16 +777,20 @@ export default function CSRForm({ doctorId }) {
                         ))}
                       </select>
                     </td>
-                    <td className="border px-3 py-2 print:border-black">
+
+                    <td className="border px-4 py-2 print:border-black">
                       <select
                         value={item.strength}
                         onChange={(e) =>
                           handleProductChange(index, "strength", e.target.value)
                         }
-                        className="w-full px-2 py-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 print:border-gray-400 print:shadow-none"
+                        className="w-full rounded-md border border-gray-300 px-3 py-2
+                  focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-500 transition shadow-sm print:border-gray-400 print:shadow-none"
                         required
                       >
-                        <option value="">Select Strength</option>
+                        <option value="" disabled>
+                          Select Strength
+                        </option>
                         {[
                           "50mg",
                           "75mg",
@@ -779,67 +816,42 @@ export default function CSRForm({ doctorId }) {
                         ))}
                       </select>
                     </td>
-                    <td className="border px-3 py-2 print:border-black">
-                      <input
-                        type="number"
-                        min={1}
-                        max={1000}
-                        value={item.presentUnits}
-                        onChange={(e) =>
-                          handleProductChange(
-                            index,
-                            "presentUnits",
-                            Number(e.target.value)
-                          )
-                        }
-                        className="w-full px-2 py-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 print:border-gray-400 print:shadow-none"
-                        placeholder="0"
-                        required
-                      />
-                    </td>
-                    <td className="border px-3 py-2 print:border-black">
-                      <input
-                        type="number"
-                        min={1}
-                        max={1000}
-                        value={item.expectedUnits}
-                        onChange={(e) =>
-                          handleProductChange(
-                            index,
-                            "expectedUnits",
-                            Number(e.target.value)
-                          )
-                        }
-                        className="w-full px-2 py-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 print:border-gray-400 print:shadow-none"
-                        placeholder="0"
-                        required
-                      />
-                    </td>
-                    <td className="border px-3 py-2 print:border-black">
-                      <input
-                        type="number"
-                        min={1}
-                        max={1000}
-                        value={item.additionUnits}
-                        onChange={(e) =>
-                          handleProductChange(
-                            index,
-                            "additionUnits",
-                            Number(e.target.value)
-                          )
-                        }
-                        className="w-full px-2 py-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 print:border-gray-400 print:shadow-none"
-                        placeholder="0"
-                        required
-                      />
-                    </td>
-                    <td className="border px-3 py-2 text-center print:border-black print:hidden">
+
+                    {["presentUnits", "expectedUnits", "additionUnits"].map(
+                      (field) => (
+                        <td
+                          key={field}
+                          className="border px-4 py-2 print:border-black"
+                        >
+                          <input
+                            type="number"
+                            min={0}
+                            max={10000}
+                            value={item[field]}
+                            onChange={(e) =>
+                              handleProductChange(
+                                index,
+                                field,
+                                Number(e.target.value)
+                              )
+                            }
+                            className="w-full rounded-md border border-gray-300 px-3 py-2
+                    focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-500 transition print:border-gray-400 print:shadow-none"
+                            placeholder="0"
+                            required
+                          />
+                        </td>
+                      )
+                    )}
+
+                    <td className="border px-4 py-2 text-center print:border-black print:hidden">
                       <button
                         type="button"
                         onClick={() => removeProduct(index)}
-                        className="text-red-500 hover:text-red-700 font-semibold transition"
+                        className="text-red-600 hover:text-red-800 font-semibold transition"
+                        aria-label={`Remove product row ${index + 1}`}
                       >
-                        ✕
+                        <Trash2 size={20} className="text-red-500" />
                       </button>
                     </td>
                   </tr>
@@ -847,142 +859,171 @@ export default function CSRForm({ doctorId }) {
               </tbody>
             </table>
           </div>
-          <section>
-            <div></div>
-          </section>
 
-          <div className="mt-4 flex justify-end print:hidden">
+          <div className="mt-6 flex justify-end print:hidden">
             <button
               type="button"
               onClick={addProduct}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700 transition mb-3"
+              className="font-bold text-white bg-blue-950 px-4 py-2 rounded-lg drop-shadow-lg hover:bg-gray-700 transition"
             >
               + Add Product
             </button>
           </div>
-          <div className="mb-6 print:mb-0">
-            <h3 className="text-xl font-bold mb-4">Business Value</h3>
-            <div className="w-full border border-gray-200 rounded-md overflow-hidden">
-              <div className="grid grid-cols-3 bg-gray-100 text-gray-600 text-sm font-semibold">
-                <div className="p-2 border">Present</div>
-                <div className="p-2 border">Expected</div>
-                <div className="p-2 border">Addition</div>
-              </div>
-              <div className="grid grid-cols-3">
-                <div className="p-2 border">
-                  <input
-                    type="number"
-                    name="businessValuePresent"
-                    value={formData.Business?.[0]?.businessValuePresent || ""}
-                    onChange={(e) =>
-                      handleBusinessChange(
-                        0,
-                        "businessValuePresent",
-                        e.target.value
-                      )
-                    }
-                    className="w-full border px-2 py-1 rounded"
-                  />
-                </div>
-                <div className="p-2 border">
-                  <input
-                    type="number"
-                    name="businessValueExpected"
-                    value={formData.Business?.[0]?.businessValueExpected || ""}
-                    onChange={(e) =>
-                      handleBusinessChange(
-                        0,
-                        "businessValueExpected",
-                        e.target.value
-                      )
-                    }
-                    className="w-full border px-2 py-1 rounded"
-                  />
-                </div>
-                <div className="p-2 border">
-                  <input
-                    type="number"
-                    name="businessValueAddition"
-                    value={formData.Business?.[0]?.businessValueAddition || ""}
-                    onChange={(e) =>
-                      handleBusinessChange(
-                        0,
-                        "businessValueAddition",
-                        e.target.value
-                      )
-                    }
-                    className="w-full border px-2 py-1 rounded"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
 
-        {/* Business Details */}
-        <section className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 sm:p-6 border border-gray-200 mt-6 print:bg-white print:shadow-none print:p-0 print:border-none">
-          <div className="bg-white shadow-md rounded-lg p-6 border border-gray-200">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">
-              Bussiness Details
+          {/* Business Value */}
+          <div className="mt-4">
+            <h2
+              id="Busines-details-title"
+              className="text-1xl text-center font-bold text-gray-900 mb-6 border-b border-gray-200 pb-3"
+            >
+              Business Value
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {[
-                { label: "Required Date", name: "requiredDate", type: "date" },
-                { label: "Exact Cost", name: "exactCost" },
-                { label: "CSR By HO", name: "byHo" },
-                { label: "ROI %", name: "roi" },
-                {
-                  label: "Expected Total Business (Value)",
-                  name: "expectedTotalBusiness",
-                },
 
-                { label: "Business Period (Months)", name: "businessPeriod" },
-
-                {
-                  label: "Investment Last 12 Months",
-                  name: "investmentLastYear",
-                },
-              ].map((field) => (
-                <div key={field.name}>
-                  <label className="block text-sm font-medium text-gray-700">
-                    {field.label}
-                  </label>
-                  <input
-                    type={field.type || "text"}
-                    name={field.name}
-                    value={formData.Business?.[0]?.[field.name] || ""}
-                    onChange={(e) =>
-                      handleBusinessChange(0, field.name, e.target.value)
-                    }
-                    className="input border"
-                  />
+            <div className="w-full max-w-6xl border border-gray-300 rounded-lg overflow-hidden">
+              {/* Header Row */}
+              <div className="grid grid-cols-3 text-gray-700 text-sm font-semibold bg-gray-100 border-b border-gray-300">
+                <div className="p-2 text-center border-r border-gray-300">
+                  Present
                 </div>
-              ))}
-              <div className="md:col-span-3">
-                <label className="block text-sm font-medium text-gray-700">
-                  Item Requested (Complete Specifications)
-                </label>
-                <textarea
-                  name="itemRequested"
-                  value={formData.Business?.[0]?.itemRequested || ""}
+                <div className="p-2 text-center border-r border-gray-300">
+                  Expected
+                </div>
+                <div className="p-2 text-center">Addition</div>
+              </div>
+
+              {/* Input Row */}
+              <div className="grid grid-cols-3">
+                <input
+                  type="number"
+                  name="businessValuePresent"
+                  value={formData.Business?.[0]?.businessValuePresent || ""}
                   onChange={(e) =>
-                    handleBusinessChange(0, "itemRequested", e.target.value)
+                    handleBusinessChange(
+                      0,
+                      "businessValuePresent",
+                      e.target.value
+                    )
                   }
-                  rows={3}
-                  className="input border w-full"
+                  className="w-full border-r border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-500"
+                  placeholder="0"
+                />
+                <input
+                  type="number"
+                  name="businessValueExpected"
+                  value={formData.Business?.[0]?.businessValueExpected || ""}
+                  onChange={(e) =>
+                    handleBusinessChange(
+                      0,
+                      "businessValueExpected",
+                      e.target.value
+                    )
+                  }
+                  className="w-full border-r border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-500"
+                  placeholder="0"
+                />
+                <input
+                  type="number"
+                  name="businessValueAddition"
+                  value={formData.Business?.[0]?.businessValueAddition || ""}
+                  onChange={(e) =>
+                    handleBusinessChange(
+                      0,
+                      "businessValueAddition",
+                      e.target.value
+                    )
+                  }
+                  className="w-full px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-500"
+                  placeholder="0"
                 />
               </div>
             </div>
           </div>
         </section>
 
-        {/* Chemist Table */}
-        <section className="bg-gradient-to-r from-blue-50 to-indigo-50 shadow-lg rounded-xl p-4 sm:p-6 border border-gray-200 print:bg-white print:shadow-none print:p-0 print:border-none">
-          <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4 border-b pb-2">
-            Chemist Monitoring the Business
-          </h3>
+        {/* Business Details */}
+        <section className=" border border-gray-200 rounded-md bg-white p-4 mt-2 print:bg-white print:shadow-none print:p-0 print:border-none max-w-6xl mx-auto">
+          <h2
+            id="busines-details-title"
+            className="text-1xl text-center font-bold text-gray-900 mb-6 border-b border-gray-200 pb-3"
+          >
+            Business Details
+          </h2>
 
-          <div className="overflow-x-auto rounded-lg border border-gray-200 print:overflow-visible print:border-black">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {[
+              { label: "Required Date", name: "requiredDate", type: "date" },
+              { label: "Exact Cost", name: "exactCost" },
+              { label: "CSR By HO", name: "byHo" },
+              { label: "ROI %", name: "roi" },
+              {
+                label: "Expected Total Business (Value)",
+                name: "expectedTotalBusiness",
+              },
+              { label: "Business Period (Months)", name: "businessPeriod" },
+              {
+                label: "Investment Last 12 Months",
+                name: "investmentLastYear",
+              },
+            ].map(({ label, name, type }) => (
+              <div key={name}>
+                <label
+                  htmlFor={name}
+                  className="block text-sm font-medium text-gray-700 mb-2 print:text-black"
+                >
+                  {label}
+                </label>
+                <input
+                  type={type || "text"}
+                  id={name}
+                  name={name}
+                  value={formData.Business?.[0]?.[name] || ""}
+                  onChange={(e) =>
+                    handleBusinessChange(0, name, e.target.value)
+                  }
+                  className="w-full rounded-md border border-gray-300 px-4 py-2 text-gray-900
+            placeholder-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+            transition print:border-gray-400 print:shadow-none"
+                  placeholder={
+                    type === "date" ? "" : `Enter ${label.toLowerCase()}`
+                  }
+                />
+              </div>
+            ))}
+
+            <div className="sm:col-span-2 md:col-span-3">
+              <label
+                htmlFor="itemRequested"
+                className="block text-sm font-medium text-gray-700 mb-1 print:text-black"
+              >
+                Item Requested (Complete Specifications)
+              </label>
+              <textarea
+                id="itemRequested"
+                name="itemRequested"
+                value={formData.Business?.[0]?.itemRequested || ""}
+                onChange={(e) =>
+                  handleBusinessChange(0, "itemRequested", e.target.value)
+                }
+                rows={3}
+                placeholder="Provide complete specifications here..."
+                className="w-full rounded-md border border-gray-300 px-3 py-2 resize-y
+          text-gray-900 placeholder-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+          transition print:border-gray-400 print:shadow-none"
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* Chemist Table */}
+        <section className=" border border-gray-200 rounded-md p-2 sm:p-4 print:bg-white print:shadow-none print:p-0 print:border-none">
+          <h2
+            id="doctor-details-title"
+            className="text-1xl font-bold text-center text-gray-900 mb-6 border-b border-gray-200 pb-2"
+          >
+            Chemist Details
+          </h2>
+
+          <div className="overflow-x-auto border border-gray-200 print:overflow-visible print:border-black">
             <table className="min-w-full text-sm border-collapse">
               <thead className="bg-gray-100 text-gray-700 uppercase text-xs print:bg-white print:border-b print:border-black">
                 <tr>
@@ -1020,7 +1061,7 @@ export default function CSRForm({ doctorId }) {
                         onChange={(e) =>
                           handleInputChange(e, index, "chemists", "chemistName")
                         }
-                        className="w-full px-2 py-1 border rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none print:border-gray-400"
+                        className="w-full px-2 py-1 border  focus:ring-2 focus:ring-blue-400 focus:outline-none print:border-gray-400"
                       />
                     </td>
                     <td className="border px-4 py-2 print:border-black">
@@ -1035,7 +1076,7 @@ export default function CSRForm({ doctorId }) {
                             "businessShare"
                           )
                         }
-                        className="w-full px-2 py-1 border rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none print:border-gray-400"
+                        className="w-full px-2 py-1 border focus:ring-2 focus:ring-blue-400 focus:outline-none print:border-gray-400"
                       />
                     </td>
                     <td className="border px-4 py-2 print:border-black">
@@ -1050,7 +1091,7 @@ export default function CSRForm({ doctorId }) {
                             "otherDoctors"
                           )
                         }
-                        className="w-full px-2 py-1 border rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none print:border-gray-400"
+                        className="w-full px-2 py-1 border focus:ring-2 focus:ring-blue-400 focus:outline-none print:border-gray-400"
                       />
                     </td>
                     <td className="border px-4 py-2 text-center print:hidden">
@@ -1059,7 +1100,7 @@ export default function CSRForm({ doctorId }) {
                         onClick={() => removeChemist(index)}
                         className="text-red-500 hover:text-red-700 font-semibold transition-colors duration-200"
                       >
-                        ✕
+                        <Trash2 size={20} className="text-red-500" />
                       </button>
                     </td>
                   </tr>
@@ -1072,7 +1113,7 @@ export default function CSRForm({ doctorId }) {
             <button
               type="button"
               onClick={addChemist}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700 transition duration-200"
+              className="font-bold text-white bg-blue-950 px-4 py-2 rounded-lg drop-shadow-lg hover:bg-gray-600 transition duration-200"
             >
               + Add Chemist
             </button>
@@ -1089,8 +1130,8 @@ export default function CSRForm({ doctorId }) {
               name="investmentInstructions"
               value={formData.investmentInstructions}
               onChange={handleInputChange}
-              rows={3}
-              className="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 print:border-gray-400 print:shadow-none"
+              rows={2}
+              className="w-full px-3 py-2 rounded-md border focus:outline-none focus:ring-2 focus:ring-blue-500 print:border-gray-400 print:shadow-none"
             />
           </div>
           <div>
@@ -1101,17 +1142,20 @@ export default function CSRForm({ doctorId }) {
               name="comments"
               value={formData.comments}
               onChange={handleInputChange}
-              rows={3}
-              className="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 print:border-gray-400 print:shadow-none"
+              rows={2}
+              className="w-full px-3 py-2 border rounded-md  focus:outline-none focus:ring-2 focus:ring-blue-500 print:border-gray-400 print:shadow-none"
             />
           </div>
         </section>
 
         {/* Ledger Summary */}
-        <section className="bg-gradient-to-r from-blue-50 to-indigo-50 shadow-md rounded-lg p-4 sm:p-6 border border-gray-200 mt-6 print:bg-white print:shadow-none print:p-0 print:border-none">
-          <h3 className="text-lg sm:text-xl font-semibold text-gray-700 mb-2 border-b pb-2">
+        <section className=" border border-gray-200 rounded-md p-4 sm:p-6  mt-4 print:bg-white print:shadow-none print:p-0 print:border-none">
+          <h2
+            id="doctor-details-title"
+            className="text-1xl font-bold text-center text-gray-900 mb-6 border-b border-gray-200 pb-3"
+          >
             Ledger Summary
-          </h3>
+          </h2>
           <div className="overflow-x-auto print:overflow-visible">
             <table className="min-w-full text-sm border-collapse border border-gray-200 print:border-black">
               <thead className="bg-gray-100 text-gray-700 uppercase text-xs print:bg-white">
@@ -1129,7 +1173,7 @@ export default function CSRForm({ doctorId }) {
               <tbody>
                 {formData.ledgerSummary.map((ledger, index) => (
                   <tr key={index} className="hover:bg-gray-50 print:bg-white">
-                    <td className="border px-4 py-2 print:border-black">
+                    <td className="border rounded-md  px-4 py-2 print:border-black">
                       <input
                         type="text"
                         value={ledger.month}
@@ -1154,9 +1198,9 @@ export default function CSRForm({ doctorId }) {
                       <button
                         type="button"
                         onClick={() => removeLedger(index)}
-                        className="text-red-500 hover:text-red-700 font-semibold"
+                        className="text-red-500  hover:text-red-700 font-semibold"
                       >
-                        ✕
+                        <Trash2 size={20} className="text-red-500" />
                       </button>
                     </td>
                   </tr>
@@ -1168,7 +1212,7 @@ export default function CSRForm({ doctorId }) {
             <button
               type="button"
               onClick={addLedgerRow}
-              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm"
+              className="font-bold text-white bg-blue-950 drop-shadow-lg px-4 py-2 rounded-lg hover:bg-gray-600 text-sm"
             >
               + Add Row
             </button>
@@ -1177,13 +1221,44 @@ export default function CSRForm({ doctorId }) {
 
         {/* File Upload */}
         <section className="mt-6 print:hidden">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          
+            <h2
+            id="doctor-details-title"
+            className="text-1xl font-bold text-center text-gray-900 mb-2 border-gray-200 pb-3"
+          >
             Attach Sales Report
+          </h2>
+            <span className="block text-xs text-gray-500 mt-1">
+              (Accepted formats: PDF, JPG, PNG, XLSX, DOCX)
+            </span>
+          
+
+          <label
+            htmlFor="salesReport"
+            className="flex items-center justify-center gap-2 px-5 py-3 border-2 border-dashed border-gray-400 rounded-lg bg-gray-50 hover:bg-gray-100 cursor-pointer transition"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5 text-blue-500"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 12v9m0 0l-3-3m3 3l3-3M12 3v9m0 0l3-3m-3 3l-3-3"
+              />
+            </svg>
+            <span className="text-gray-700 font-medium">Click to Upload</span>
           </label>
+
           <input
+            id="salesReport"
             type="file"
             accept=".pdf,.jpg,.jpeg,.png,.xlsx,.docx"
-            className="border-2 border-gray-300 p-2 rounded-lg w-full sm:w-auto"
+            className="hidden"
             onChange={(e) => {
               const selectedFile = e.target.files[0];
               if (!selectedFile) return;
@@ -1197,7 +1272,7 @@ export default function CSRForm({ doctorId }) {
         <div className="flex justify-center">
           <button
             type="submit"
-            className="bg-green-600 text-white px-8 py-3 rounded-lg shadow-md hover:bg-green-700 transition-all duration-200 text-lg font-semibold"
+            className="bg-blue-700 hover:bg-yellow-500 text-blue-950 font-semibold w-[400px] mt-6  px-8 py-3 rounded-lg shadow-md  transition-all duration-200 text-lg "
           >
             Submit
           </button>

@@ -502,7 +502,7 @@ const handleSearch = () => {
               <option value="multan">Multan</option>
               <option value="faisalabad">Faisalabad</option>
               <option value="karachi">Karachi</option>
-              <option value="Lahore">Lahore</option>
+              <option value="lahore">Lahore</option>
               <option value="abbottabad">Abbottabad</option>
               <option value="sheikhupura">Sheikhupura</option>
               <option value="kasur">Kasur</option>

@@ -45,7 +45,7 @@ export default function Admin() {
   const [selectedCSR, setSelectedCSR] = useState(null);
   const [users, setUsers] = useState([]);
   const [error, setError] = useState("");
-  const [region, setRegion] = useState("");
+  const [ district, setDistrict] = useState("");
   const [reports, setReports] = useState([]);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -176,7 +176,7 @@ export default function Admin() {
 // };
 const handleSearch = () => {
   router.push(
-    `/admin/fetFilter?region=${region}&startDate=${startDate}&endDate=${endDate}`
+    `/admin/fetFilter?district=${district}&startDate=${startDate}&endDate=${endDate}`
   );
 };
 
@@ -495,14 +495,14 @@ const handleSearch = () => {
                       </label>
                       <select
                         className="w-full border rounded-md p-2"
-                        value={region}
-                        onChange={(e) => setRegion(e.target.value)}
+                        value={district}
+                        onChange={(e) => setDistrict(e.target.value)}
                       >
                          <option value="">Select Area</option>
               <option value="multan">Multan</option>
               <option value="faisalabad">Faisalabad</option>
               <option value="karachi">Karachi</option>
-              <option value="lahore">Lahore</option>
+              <option value="Lahore">Lahore</option>
               <option value="abbottabad">Abbottabad</option>
               <option value="sheikhupura">Sheikhupura</option>
               <option value="kasur">Kasur</option>

@@ -1,9 +1,27 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 
 const SummaryPage = ({ data = [] }) => {
-  const [visibleRows, setVisibleRows] = useState(20);
+  const [visibleRows, setVisibleRows] = useState(500);
+  // const [reports, setReports] = useState([]);
+
+  // useEffect(() => {
+  //   const fetchReports = async () => {
+  //     try {
+  //       const res = await fetch("/api/csrInfo/getreportsCSR", {
+  //         credentials: "include",
+  //       });
+
+  //       const data = await res.json();
+  //       console.log("Fetched CSR Reports:", data);
+  //       setReports(data);
+  //     } catch (err) {
+  //       console.error("Fetch failed", err);
+  //     }
+  //   };
+  //   fetchReports();
+  // }, []);
 
   return (
     <div className="overflow-x-auto  m-2 mt-4 bg-white">
@@ -24,7 +42,7 @@ const SummaryPage = ({ data = [] }) => {
               "Executed By",
               "Particulars",
               "Amount",
-              "Action"
+              "Action",
             ].map((header) => (
               <th
                 key={header}
@@ -44,27 +62,69 @@ const SummaryPage = ({ data = [] }) => {
                   ? new Date(csr.executeDate).toLocaleDateString()
                   : "N/A"}
               </td>
-              <td className="px-2 py-2 border border-gray-300">{csr?.csrNumber || "N/A"}</td>
-              <td className="px-2 py-2 border border-gray-300">{csr.doctorId?.name}</td>
-              <td className="px-2 py-2 border border-gray-300">{csr.doctorId?.speciality}</td>
-              <td className="px-2 py-2 border border-gray-300">{csr.doctorId?.address}</td>
-              <td className="px-2 py-2 border border-gray-300">{csr.doctorId?.brick}</td>
-              <td className="px-2 py-2 border border-gray-300">{csr.doctorId?.district}</td>
-              <td className="px-2 py-2 border border-gray-300">{csr.doctorId?.zone}</td>
-              <td className="px-2 py-2 border border-gray-300">{csr.doctorId?.group}</td>
-              <td className="px-2 py-2 border border-gray-300">{csr.executedBy || "N/A"}</td>
-              <td className="px-2 py-2 border border-gray-300">{csr.particulars}</td>
+              <td className="px-2 py-2 border border-gray-300">
+                {csr?.csrNumber || "N/A"}
+              </td>
+              <td className="px-2 py-2 border border-gray-300">
+                {csr.doctorId?.name}
+              </td>
+              <td className="px-2 py-2 border border-gray-300">
+                {csr.doctorId?.speciality}
+              </td>
+              <td className="px-2 py-2 border border-gray-300">
+                {csr.doctorId?.address}
+              </td>
+              <td className="px-2 py-2 border border-gray-300">
+                {csr.doctorId?.brick}
+              </td>
+              <td className="px-2 py-2 border border-gray-300">
+                {csr.doctorId?.district}
+              </td>
+              <td className="px-2 py-2 border border-gray-300">
+                {csr.doctorId?.zone}
+              </td>
+              <td className="px-2 py-2 border border-gray-300">
+                {csr.doctorId?.group}
+              </td>
+              <td className="px-2 py-2 border border-gray-300">
+                {csr.executedBy || "N/A"}
+              </td>
+              <td className="px-2 py-2 border border-gray-300">
+                {csr.particulars}
+              </td>
               <td className="px-2 py-2 border border-gray-300">
                 {csr.Business?.length > 0
                   ? Number(csr.Business[0].exactCost).toLocaleString()
                   : "N/A"}
               </td>
-               <td className="px-2 py-2 border border-gray-300">
-                {}
-              </td>
+              <td className="px-2 py-2 border border-gray-300">{}</td>
             </tr>
           ))}
         </tbody>
+        <tfoot>
+          <tr className="bg-gray-100 font-bold text-[13px]">
+            <td
+              colSpan={12}
+              className="px-2 py-2 border border-gray-400 text-right"
+            >
+              Total:
+            </td>
+            <td className="px-2 py-2 border border-gray-400">
+              {data
+                .slice(0, visibleRows)
+                .reduce(
+                  (sum, csr) =>
+                    sum +
+                    (csr.Business?.length > 0
+                      ? Number(csr.Business[0].exactCost)
+                      : 0),
+                  0
+                )
+                .toLocaleString()}
+            </td>
+            <td className="px-2 py-2 border border-gray-400"></td>
+          </tr>
+        </tfoot>
       </table>
 
       {visibleRows < data.length && (

@@ -555,7 +555,6 @@ const CSRList = () => {
 
                   return (
                     <div key={role} className="flex flex-col items-center">
-                    
                       {isApproved && (
                         <div className="flex flex-col items-center">
                           <div className="flex items-center ">
@@ -580,6 +579,18 @@ const CSRList = () => {
                 })}
               </div>
             </div>
+            {selectedCSR.filePath && (
+              <div className="mt-4">
+                <h2 className="font-semibold text-sm mb-2">
+                  Attached Sales Report
+                </h2>
+                <iframe
+                  src={selectedCSR.filePath}
+                  title="Sales Report"
+                  className="w-full h-[500px] border"
+                ></iframe>
+              </div>
+            )}
           </div>
         </div>
       )}

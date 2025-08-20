@@ -257,38 +257,3 @@ export default function DoctorManagement() {
   );
 }
 
-{
-  /* <Card className="p-4 sm:p-6">
-          <CardContent className="p-0">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs sm:text-sm font-medium text-gray-600">
-                  Total Doctors
-                </p>
-                <p className="text-lg sm:text-2xl font-bold text-gray-900">
-                  {doctors.length}
-                </p>
-              </div>
-              <User className="w-6 h-6 sm:w-8 sm:h-8 text-blue-500" />
-            </div>
-          </CardContent>
-        </Card> */
-}
-{
-  /* <Card className="p-4 sm:p-6">
-          <CardContent className="p-0">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Total Value</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  $
-                  {doctors
-                    .reduce((sum, d) => sum + (Number(d.totalValue) || 0), 0)
-                    .toLocaleString()}
-                </p>
-              </div>
-              <TrendingUp className="w-8 h-8 text-teal-500" />
-            </div>
-          </CardContent>
-        </Card> */
-}

@@ -42,7 +42,6 @@ export default function AddDoctorForm({ doctor }) {
       });
     }
   }, [doctor]);
-  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -51,18 +50,37 @@ export default function AddDoctorForm({ doctor }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const payload = { ...form };
+
     try {
-      if (id) {
-        await axios.patch(`/api/doctorsManage/updateDoc/${id}`, form);
-        toast.success("Doctor updated successfully!");
+      let res;
+      if (doctor?._id) {
+        // If editing, call PATCH
+        res = await fetch(`/api/doctorsManage/updateDoc/${doctor._id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
       } else {
-        await axios.post("/api/doctorsManage/doctors", form);
-        toast.success("Doctor added successfully!");
+        // If creating, call POST
+        res = await fetch(`/api/doctorsManage/doctors`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
       }
-      router.push("/admin/dashboard");
-    } catch (error) {
-      console.error("Error saving doctor:", error);
-      toast.error("Failed to save doctor.");
+
+      const data = await res.json();
+      if (res.ok) {
+        toast.success(doctor ? "Doctor updated!" : "Doctor added!");
+      
+      } else {
+        toast.error(data.message || "Something went wrong");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Error submitting doctor");
     }
   };
 

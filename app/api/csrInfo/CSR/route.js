@@ -30,6 +30,7 @@ export async function POST(req) {
     const newCSR = new CSRform({
       ...body,
       creatorId,
+      filePath: req.body.filePath,
       csrNumber: nextCsrNumber,
     });
     const saved = await newCSR.save();

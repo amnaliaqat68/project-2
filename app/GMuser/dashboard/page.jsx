@@ -31,7 +31,6 @@ const GMpage = () => {
   const [csrList, setCsrList] = useState([]);
   const [selectedCSR, setSelectedCSR] = useState(null);
   const [doctors, setDoctors] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [approvingCSR, setApprovingCSR] = useState(null);
   const [approvedCSRIds, setApprovedCSRIds] = useState([]);
   const [user, setUser] = useState(null);

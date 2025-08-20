@@ -523,7 +523,12 @@ export default function CSRForm({ doctorId }) {
                       group: selectedDoctor.group,
                       zone: selectedDoctor.zone,
                       location: selectedDoctor.location,
-                      investmentLastYear: selectedDoctor.investmentLastYear,
+                     Business: [
+        {
+          ...prev.Business?.[0],
+          investmentLastYear: selectedDoctor.investmentLastYear || "",
+        }
+      ]
                     }));
                   } else {
                     setFormData((prev) => ({

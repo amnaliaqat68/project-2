@@ -32,6 +32,8 @@ import DoctorManagement from "../doctormanagement/page";
 import ExecuteCSRPage from "../executeForm/[id]/page";
 import CSRReportsTab from "../reports/page";
 import { toast } from "react-toastify";
+import SummaryPage from "../nationalSummary/page";
+import getFilterPage from "../fetFilter/page";
 
 export default function Admin() {
   const [userRole, setUserRole] = useState("Admin");
@@ -43,6 +45,12 @@ export default function Admin() {
   const [selectedCSR, setSelectedCSR] = useState(null);
   const [users, setUsers] = useState([]);
   const [error, setError] = useState("");
+  const [region, setRegion] = useState("");
+  const [reports, setReports] = useState([]);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [filteredData, setFilteredData] = useState([]);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const [stats, setStats] = useState({
@@ -152,6 +160,26 @@ export default function Admin() {
     fetchUsers();
   }, []);
 
+//   const fetchFilteredReports = async () => {
+//   setLoading(true);
+//   try {
+//     const res = await fetch(
+//       `/api/csrInfo/getFilteredCSR?region=${region}&startDate=${startDate}&endDate=${endDate}`
+//     );
+//     const data = await res.json();
+//    console.log("Applied filters:", { region, startDate, endDate });
+//     setReports(data);
+//   } catch (err) {
+//     console.error("Fetch failed", err);
+//   }
+//   setLoading(false);
+// };
+const handleSearch = () => {
+  router.push(
+    `/admin/fetFilter?region=${region}&startDate=${startDate}&endDate=${endDate}`
+  );
+};
+
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-white via-indigo-100 to-teal-100">
       {/* Header */}
@@ -241,22 +269,37 @@ export default function Admin() {
               className=" flex overflow-x-auto md:grid w-full md:max-w-3xl
     md:grid-cols-5 gap-1 scrollbar-hide"
             >
-              <TabsTrigger value="dashboard" className="flex-shrink-0 whitespace-nowrap  md:w-full text-center" >User Management</TabsTrigger>
-              <TabsTrigger value="doctors" className="flex-shrink-0 whitespace-nowrap  md:w-full text-center">Doctors</TabsTrigger>
-              <TabsTrigger value="csrs" className="flex-shrink-0 whitespace-nowrap  md:w-full text-center">Approved CSRs</TabsTrigger>
-              <TabsTrigger value="reports"className="flex-shrink-0 whitespace-nowrap  md:w-full text-center" >Reports</TabsTrigger>
-              <TabsTrigger value="analytics" className="flex-shrink-0 whitespace-nowrap  md:w-full text-center">Analytics</TabsTrigger>
-            </TabsList>
-
-            {userRole === "Admin" && (
-              <Button
-                onClick={() => setShowcreateUser(true)}
-                className="bg-blue-600 hover:bg-blue-700 text-white w-full md:w-auto mt-12"
+              <TabsTrigger
+                value="dashboard"
+                className="flex-shrink-0 whitespace-nowrap  md:w-full text-center"
               >
-                <FileText className="w-4 h-4 mr-2" />
-                Create Users
-              </Button>
-            )}
+                User Management
+              </TabsTrigger>
+              <TabsTrigger
+                value="doctors"
+                className="flex-shrink-0 whitespace-nowrap  md:w-full text-center"
+              >
+                Doctors
+              </TabsTrigger>
+              <TabsTrigger
+                value="csrs"
+                className="flex-shrink-0 whitespace-nowrap  md:w-full text-center"
+              >
+                CSRs
+              </TabsTrigger>
+              <TabsTrigger
+                value="reports"
+                className="flex-shrink-0 whitespace-nowrap  md:w-full text-center"
+              >
+                Reports
+              </TabsTrigger>
+              <TabsTrigger
+                value="analytics"
+                className="flex-shrink-0 whitespace-nowrap  md:w-full text-center"
+              >
+                Analytics
+              </TabsTrigger>
+            </TabsList>
           </div>
 
           {/* ✅ User Management Tab */}
@@ -265,6 +308,17 @@ export default function Admin() {
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
                   <span>Users Database</span>
+                  <div className="flex justify-end mb-1">
+                    {userRole === "Admin" && (
+                      <Button
+                        onClick={() => setShowcreateUser(true)}
+                        className="bg-blue-600 hover:bg-blue-700 text-white"
+                      >
+                        <FileText className="w-4 h-4 mr-2" />
+                        Create Users +
+                      </Button>
+                    )}
+                  </div>
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -356,61 +410,174 @@ export default function Admin() {
             <DoctorManagement />
           </TabsContent>
           <TabsContent value="csrs">
-            <section className="mt-6">
-              <h2 className="text-xl font-bold mb-4">Decisons For CSRs</h2>
+            <Tabs defaultValue="list" className="space-y-2">
+              <TabsList className="grid w-full max-w-md grid-cols-2">
+                <TabsTrigger value="approved">Approved CSRs</TabsTrigger>
+                <TabsTrigger value="completed">Completed CSRs</TabsTrigger>
+              </TabsList>
+              <TabsContent value="approved">
+                <section className="mt-2">
+                  <h2 className="text-xl font-bold mb-4">Decisons For CSRs</h2>
 
-              {csrList.length === 0 ? (
-                <p>No CSR available for review.</p>
-              ) : (
-                <div className="space-y-4">
-                  {csrList.map((csr) => (
-                    <div
-                      key={csr._id}
-                      className="border rounded-lg p-4 shadow-sm bg-white"
-                    >
-                      <div className="flex justify-between items-center mb-2">
-                        <div>
-                          <p className="font-semibold">
-                            Doctor: {csr.doctorId?.name || "N/A"}
-                          </p>
-                          <p className="text-gray-600">
-                            Commitment:{" "}
-                            {csr.Business?.[0]?.businessValueExpected || 0}
-                          </p>
-                          <p className="text-gray-600">
-                            Created By: {csr.creatorId?.name || "N/A"}
-                          </p>
+                  {csrList.length === 0 ? (
+                    <p>No CSR available for review.</p>
+                  ) : (
+                    <div className="space-y-4">
+                      {csrList.map((csr) => (
+                        <div
+                          key={csr._id}
+                          className="border rounded-lg p-4 shadow-sm bg-white"
+                        >
+                          <div className="flex justify-between items-center mb-2">
+                            <div>
+                              <p className="font-semibold">
+                                Doctor: {csr.doctorId?.name || "N/A"}
+                              </p>
+                              <p className="text-gray-600">
+                                Commitment:{" "}
+                                {csr.Business?.[0]?.businessValueExpected || 0}
+                              </p>
+                              <p className="text-gray-600">
+                                Created By: {csr.creatorId?.name || "N/A"}
+                              </p>
+                            </div>
+                            <div className="space-x-2">
+                              {/* Action Buttons */}
+
+                              <Button
+                                variant="default"
+                                onClick={() => {
+                                  console.log("Navigating to:", csr._id);
+                                  router.push(`/admin/executeForm/${csr._id}`);
+                                }}
+                                className="bg-green-500 hover:bg-blue-700 text-white"
+                              >
+                                Execute
+                              </Button>
+
+                              <Button
+                                onClick={() => setSelectedCSR(csr)}
+                                className="bg-blue-600 hover:bg-blue-700 text-white"
+                              >
+                                View Details
+                              </Button>
+                            </div>
+                          </div>
                         </div>
-                        <div className="space-x-2">
-                          {/* Action Buttons */}
-
-                          <Button
-                            variant="default"
-                            onClick={() => {
-                              console.log("Navigating to:", csr._id);
-                              router.push(`/admin/executeForm/${csr._id}`);
-                            }}
-                            className="bg-green-500 hover:bg-blue-700 text-white"
-                          >
-                            Execute
-                          </Button>
-
-                          <Button
-                            onClick={() => setSelectedCSR(csr)}
-                            className="bg-blue-600 hover:bg-blue-700 text-white"
-                          >
-                            View Details
-                          </Button>
-                        </div>
-                      </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              )}
-            </section>
+                  )}
+                </section>
+              </TabsContent>
+              <TabsContent value="completed">
+                <CSRReportsTab />
+              </TabsContent>
+            </Tabs>
           </TabsContent>
           <TabsContent value="reports">
-            <CSRReportsTab />
+            <Tabs defaultValue="reportList">
+              <TabsList className="grid w-full max-w-md grid-cols-2">
+                <TabsTrigger value="nationalSummary">
+                  National Summary
+                </TabsTrigger>
+                <TabsTrigger value="comingSoon">Coming Soon</TabsTrigger>
+              </TabsList>
+              <TabsContent value="nationalSummary">
+                <Card className="p-4 space-y-4">
+                  <h2 className="text-lg font-bold">Filter National Summary</h2>
+
+                  {/* Filter Form */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    {/* Region */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">
+                        Region
+                      </label>
+                      <select
+                        className="w-full border rounded-md p-2"
+                        value={region}
+                        onChange={(e) => setRegion(e.target.value)}
+                      >
+                         <option value="">Select Area</option>
+              <option value="multan">Multan</option>
+              <option value="faisalabad">Faisalabad</option>
+              <option value="karachi">Karachi</option>
+              <option value="lahore">Lahore</option>
+              <option value="abbottabad">Abbottabad</option>
+              <option value="sheikhupura">Sheikhupura</option>
+              <option value="kasur">Kasur</option>
+              <option value="dgk">DGK</option>
+              <option value="jampur">Jampur</option>
+              <option value="layyah">Layyah</option>
+              <option value="ryk">RYK</option>
+              <option value="bhp">BHP</option>
+              <option value="khanewal">Khanewal</option>
+              <option value="sargodha">Sargodha</option>
+              <option value="chiniot">Chiniot</option>
+              <option value="peshawar">Peshawar</option>
+              <option value="charsadda">Charsadda</option>
+              <option value="mardan">Mardan</option>
+              <option value="nowshera">Nowshera</option>
+              <option value="swat">Swat</option>
+              <option value="sahiwal">Sahiwal</option>
+              <option value="timergara">Timergara</option>
+              <option value="burewala">Burewala</option>
+              <option value="bhakkar">Bhakkar</option>
+              <option value="jhang">Jhang</option>
+              <option value="toba">Toba</option>
+              <option value="gojra">Gojra</option>
+              <option value="gujranwala">Gujranwala</option>
+              <option value="sialkot">Sialkot</option>
+                      </select>
+                    </div>
+
+                    {/* From Date */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">
+                        From Date
+                      </label>
+                      <input
+                        type="date"
+                        className="w-full border rounded-md p-2"
+                        value={startDate}
+                        onChange={(e) => setStartDate(e.target.value)}
+                      />
+                    </div>
+
+                    {/* To Date */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">
+                        To Date
+                      </label>
+                      <input
+                        type="date"
+                        className="w-full border rounded-md p-2"
+                        value={endDate}
+                        onChange={(e) => setEndDate(e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Search Button */}
+                  <Button 
+                   onClick={ handleSearch}
+                  className="bg-blue-600 hover:bg-blue-700 text-white">
+                    Search
+                  </Button>
+                </Card>
+
+                {/* Results */}
+                <div className="mt-4">
+                  {loading ? (
+                    <p>Loading...</p>
+                  ) : reports.length > 0 ? (
+                    <SummaryPage data={reports} />
+                  ) : (
+                    <p className="text-gray-500">No results found.</p>
+                  )}
+                </div>
+              </TabsContent>
+            </Tabs>
           </TabsContent>
         </Tabs>
 
@@ -784,13 +951,18 @@ export default function Admin() {
                                 {first?.month || ""}
                               </td>
                               <td className="border text-[9px] p-1">
-                               {first?.sale != null ? Number(first.sale).toLocaleString() : ""}{first?.sale || ""}
+                                {first?.sale != null
+                                  ? Number(first.sale).toLocaleString()
+                                  : ""}
+                                {first?.sale || ""}
                               </td>
                               <td className="border text-[9px] p-1">
                                 {second?.month || ""}
                               </td>
                               <td className="border text-[9px] p-1">
-                                {second?.sale != null ? Number(second.sale).toLocaleString() : ""}
+                                {second?.sale != null
+                                  ? Number(second.sale).toLocaleString()
+                                  : ""}
                               </td>
                             </tr>
                           );

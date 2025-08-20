@@ -113,10 +113,10 @@ const SMpage = () => {
             <div className="flex items-center gap-1">
               <Button
                 onClick={handleLogout}
-                className="bg-blue-600 hover:bg-blue-700 text-white flex items-center w-[80px]
+                className="bg-blue-600 hover:bg-blue-700 text-white flex items-center w-[100px]
              px-1 py-1 text-[12px] sm:px-4 sm:py-2 sm:text-sm"
               >
-                <LogOut className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                <LogOut className="h-2 w-2 sm:h-4 sm:w-4 sm:mr-1" />
                 Logout
               </Button>
               <User className="w-5 h-5 text-gray-500" />

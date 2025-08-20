@@ -21,6 +21,9 @@ const BusinessValueSchema = new mongoose.Schema({
   byHo: { type: String },
   businessPeriod: { type: Number },
   expectedTotalBusiness: { type: Number },
+  businessValuePresent: { type: Number },
+  businessValueExpected: { type: Number },
+  businessValueAddition: { type: Number },
   roi: { type: Number },
   exactCost: { type: Number },
   requiredDate: { type: Date },
@@ -47,9 +50,7 @@ const CSRformschema = new mongoose.Schema(
         return this.role === "admin";
       },
     },
-    businessValuePresent: { type: Number },
-    businessValueExpected: { type: Number },
-    businessValueAddition: { type: Number },
+
     role: { type: String, enum: ["admin", "user", "dsm", "gm"] },
 
     executeDate: {
@@ -83,10 +84,10 @@ const CSRformschema = new mongoose.Schema(
       enum: ["completed", "pending", "rejected"],
       default: "pending",
     },
-   approvedBy: {
-     sm: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
-    gm: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
-  },
+    approvedBy: {
+      sm: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
+      gm: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
+    },
 
     groupOfFE: { type: String },
     patientsMorning: { type: Number },

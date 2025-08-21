@@ -12,7 +12,7 @@ export default function GetFilterPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const region = searchParams.get("region") || "";
+  const district = searchParams.get("district") || "";
   const startDate = searchParams.get("startDate") || "";
   const endDate = searchParams.get("endDate") || "";
   const [reports, setReports] = useState([]);
@@ -132,11 +132,13 @@ export default function GetFilterPage() {
   useEffect(() => {
     const fetchFilteredReports = async () => {
       setLoading(true);
+      console.log("Fetching with parameters:", { district, startDate, endDate });
       try {
         const res = await fetch(
-          `/api/csrInfo/getFilteredCSR?region=${region}&startDate=${startDate}&endDate=${endDate}`
+          `/api/csrInfo/getFilteredCSR?district=${district}&startDate=${startDate}&endDate=${endDate}`
         );
         const data = await res.json();
+        console.log("Received data:", data.length, "records");
         setReports(data);
       } catch (err) {
         console.error("Fetch failed", err);
@@ -144,10 +146,9 @@ export default function GetFilterPage() {
       setLoading(false);
     };
 
-    if (region || startDate || endDate) {
-      fetchFilteredReports();
-    }
-  }, [region, startDate, endDate]);
+    // Always fetch data, even if no filters are applied
+    fetchFilteredReports();
+  }, [district, startDate, endDate]);
 
   return (
     <div className="">

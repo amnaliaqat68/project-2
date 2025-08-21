@@ -9,6 +9,8 @@ export async function GET(req) {
   const startDate = searchParams.get("startDate");
   const endDate = searchParams.get("endDate");
 
+  console.log("Received parameters:", { district, startDate, endDate });
+
   let filter = { adminStatus: "completed" };
 
   if (startDate && endDate) {
@@ -17,35 +19,31 @@ export async function GET(req) {
       $lte: new Date(endDate),
     };
   }
-  if (district) {
-  filter["doctorId.district"] = new RegExp("^" + district + "$", "i"); 
-  // case-insensitive match
-}
 
   try {
+    // First, get all data with populated doctorId
     let data = await CSRfom.find(filter).lean().populate({
       path: "doctorId",
       select: "name speciality address brick district zone group",
     });
 
-    console.log(
-      "All doctor districts:",
-      data.map((d) => d.doctorId?.district)
-    );
+    console.log("Total records found:", data.length);
+    console.log("Sample doctor districts:", data.slice(0, 5).map(d => d.doctorId?.district));
 
-   
-  //   if (district) {
-  // data = data.filter(
-  //   (item) =>
-  //     item.doctorId &&
-  //     item.doctorId.district &&
-  //     item.doctorId.district.toLowerCase() === district.toLowerCase()
-  // );
-  //   }
+    // Apply district filter after population if district is provided
+    if (district) {
+      data = data.filter(
+        (item) =>
+          item.doctorId &&
+          item.doctorId.district &&
+          item.doctorId.district.toLowerCase() === district.toLowerCase()
+      );
+      console.log("After district filter:", data.length, "records");
+    }
 
     return NextResponse.json(data);
   } catch (error) {
-    console.error(error);
+    console.error("API Error:", error);
     return new NextResponse("Error fetching data", { status: 500 });
   }
 }
